@@ -1,3 +1,6 @@
 # Nix build artifacts
 result
 result-*
+
+# Secrets
+smb-credentials
