@@ -21,8 +21,7 @@ in
     slurp        # Region selection for screenshots
     wl-screenrec # Screen recorder
     libnotify    # notify-send for recording notifications
-    swaylock     # Screen locker
-    swayidle     # Idle management
+    swaylock     # Screen locker (hypridle calls it directly)
     pavucontrol  # Audio control GUI
     networkmanagerapplet  # Network tray applet
     screenrec-toggle  # Toggle script for wl-screenrec
@@ -54,7 +53,7 @@ in
         "waybar"
         "mako"
         "nm-applet --indicator"
-        "swayidle -w timeout 1800 'hyprctl dispatch dpms off' timeout 5400 'systemctl suspend' resume 'hyprctl dispatch dpms on'"
+        # hypridle is started automatically as a systemd user service (see services.hypridle below)
       ];
 
       # ── Input ─────────────────────────────────────────────────────────
@@ -439,6 +438,33 @@ in
     '';
   };
 
+  # ── Hypridle (replaces swayidle — uses Hyprland's native idle protocol) ──
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        lock_cmd         = "pidof swaylock || swaylock -f"; # don't double-lock
+        before_sleep_cmd = "swaylock -f";                  # lock before suspend
+        after_sleep_cmd  = "hyprctl dispatch dpms on";     # display on after resume
+      };
+      listener = [
+        {
+          timeout   = 1500;   # 25 min: lock screen
+          on-timeout = "swaylock -f";
+        }
+        {
+          timeout   = 1800;   # 30 min: display off
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume  = "hyprctl dispatch dpms on";   # reliably re-enabled by Hyprland IPC
+        }
+        {
+          timeout   = 5400;   # 90 min: suspend
+          on-timeout = "systemctl suspend";
+        }
+      ];
+    };
+  };
+
   # ── Mako notifications ────────────────────────────────────────────────
   services.mako = {
     enable = true;
@@ -455,10 +481,12 @@ in
       margin = "10";
       padding = "12";
       font = "JetBrainsMono Nerd Font 12";
-      "[urgency=high]" = {
-        border-color = "#f7768e";
-        default-timeout = 0;
-      };
     };
+    # Criteria sections must go in extraConfig — not settings — to render as [section] headers
+    extraConfig = ''
+      [urgency=high]
+      border-color=#f7768e
+      default-timeout=0
+    '';
   };
 }
