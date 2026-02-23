@@ -100,8 +100,10 @@
   # ── Go ────────────────────────────────────────────────────────────────
   programs.go = {
     enable = true;
-    goPath = "go";      # ~/go
-    goBin = "go/bin";   # ~/go/bin  (added to PATH by the module)
+    env = {
+      GOPATH = "/home/mhg/go";
+      GOBIN  = "/home/mhg/go/bin";
+    };
   };
 
   # ── Dev packages ──────────────────────────────────────────────────────

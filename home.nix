@@ -18,6 +18,7 @@
   # SSH — GitHub key config
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks."github.com" = {
       user = "git";
       identityFile = "~/.ssh/id_ed25519";
@@ -27,14 +28,26 @@
   # Git
   programs.git = {
     enable = true;
-    userName = "mhg";
-    userEmail = "mhgamble1@gmail.com";
-    extraConfig = {
+    settings = {
+      user.name  = "Mark Gamble";
+      user.email = "mhgamble1@gmail.com";
       init.defaultBranch = "main";
       # Sign commits via SSH key (switch to gpg later if needed)
       gpg.format = "ssh";
       commit.gpgsign = false; # enable once SSH signing key is set
       pull.rebase = false;
+    };
+  };
+
+  # Git — delta pager for beautiful diffs
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      navigate = true;          # n/N to move between diff sections
+      side-by-side = true;
+      line-numbers = true;
+      syntax-theme = "TwoDark";
     };
   };
 
@@ -51,17 +64,6 @@
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
-  };
-
-  # Git — delta pager for beautiful diffs
-  programs.git.delta = {
-    enable = true;
-    options = {
-      navigate = true;          # n/N to move between diff sections
-      side-by-side = true;
-      line-numbers = true;
-      syntax-theme = "TwoDark";
-    };
   };
 
   # ── Cheatsheet ────────────────────────────────────────────────────────
