@@ -15,6 +15,15 @@
   # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
+  # SSH — GitHub key config
+  programs.ssh = {
+    enable = true;
+    matchBlocks."github.com" = {
+      user = "git";
+      identityFile = "~/.ssh/id_ed25519";
+    };
+  };
+
   # Git
   programs.git = {
     enable = true;
@@ -97,14 +106,14 @@
     | `SUPER+mouse drag`       | Move floating window                |
     | `SUPER+right-click drag` | Resize window                       |
 
-    ### Screenshots
-    | Key               | Action                          |
-    |-------------------|---------------------------------|
-    | `SUPER+SHIFT+S`   | Select region                   |
-    | `SUPER+SHIFT+W`   | Capture active window           |
-    | `SUPER+SHIFT+P`   | Capture full screen             |
+    ### Screenshots + Recording
+    | Key               | Action                                      |
+    |-------------------|---------------------------------------------|
+    | `SUPER+SHIFT+S`   | Screenshot — select region                  |
+    | `SUPER+SHIFT+P`   | Screenshot — full screen                    |
+    | `SUPER+SHIFT+W`   | Screen record — toggle (start / stop)       |
 
-    Screenshots save to `~/Pictures/`.
+    Screenshots save to `~/Pictures/`. Recordings save to `~/Videos/`.
 
     ---
 

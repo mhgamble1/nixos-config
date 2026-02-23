@@ -211,6 +211,11 @@
 
       # Use vim keybindings in fish
       fish_vi_key_bindings
+
+      # Auto-attach to main tmux session (or create it) — skip if already inside tmux
+      if status is-interactive && not set -q TMUX
+        exec tmux new-session -A -s main
+      end
     '';
 
     shellAliases = {
@@ -242,6 +247,9 @@
       df    = "duf";      # readable disk free
       ps    = "procs";    # readable process list
       top   = "btm";      # bottom system monitor
+
+      # Claude Code (up-to-date via flake, alias avoids typing the full nix run command)
+      claude = "nix run github:sadjow/claude-code-nix --";
 
       # NixOS
       nrs   = "sudo nixos-rebuild switch";

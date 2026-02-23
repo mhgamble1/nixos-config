@@ -110,6 +110,24 @@
     ];
   };
 
+  # Mullvad VPN
+  services.mullvad-vpn.enable = true;
+
+  systemd.services.mullvad-autoconnect = {
+    description = "Connect Mullvad VPN to a random New York server";
+    after = [ "mullvad-daemon.service" ];
+    requires = [ "mullvad-daemon.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script = ''
+      ${pkgs.mullvad-vpn}/bin/mullvad relay set location us nyc
+      ${pkgs.mullvad-vpn}/bin/mullvad connect
+    '';
+  };
+
   # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -149,7 +167,6 @@
     wget
     git
     brave
-    claude-code
     gh
     spotify
     cifs-utils

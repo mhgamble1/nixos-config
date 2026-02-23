@@ -1,15 +1,31 @@
 { config, pkgs, lib, ... }:
 
+let
+  screenrec-toggle = pkgs.writeShellScriptBin "screenrec-toggle" ''
+    if pgrep -x wl-screenrec > /dev/null; then
+      pkill -INT wl-screenrec
+      ${pkgs.libnotify}/bin/notify-send "Screen Recording" "Saved to ~/Videos" -i camera-video
+    else
+      mkdir -p ~/Videos
+      ${pkgs.wl-screenrec}/bin/wl-screenrec -f ~/Videos/$(date +%Y-%m-%d_%H-%M-%S).mp4 &
+      ${pkgs.libnotify}/bin/notify-send "Screen Recording" "Recording started" -i camera-video
+    fi
+  '';
+in
+
 {
   # Screenshot tools and Wayland utilities
   home.packages = with pkgs; [
     hyprshot     # Native Hyprland screenshot tool
     grim         # Wayland screenshot utility (backend)
     slurp        # Region selection for screenshots
+    wl-screenrec # Screen recorder
+    libnotify    # notify-send for recording notifications
     swaylock     # Screen locker
     swayidle     # Idle management
     pavucontrol  # Audio control GUI
     networkmanagerapplet  # Network tray applet
+    screenrec-toggle  # Toggle script for wl-screenrec
   ];
 
   # Hyprland compositor configuration
@@ -104,6 +120,7 @@
       misc = {
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
+        disable_splash_rendering = true;  # suppress version notification on launch
       };
 
       # ── Keybinds ──────────────────────────────────────────────────────
@@ -116,6 +133,7 @@
         "$mod SHIFT, D, exec, wofi --show run"
         "$mod, E, exec, ghostty --class=yazi -e yazi"
         "$mod, slash, exec, ghostty --class=cheatsheet -e bat --paging=always ~/cheatsheet.md"
+        "$mod, M, exec, ghostty --class=spotify-player -e spotify_player"
 
         # Window management
         "$mod, Q, killactive,"
@@ -162,9 +180,9 @@
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
 
-        # Screenshots (hyprshot)
+        # Screenshots (hyprshot) + screen recording (wl-screenrec)
         "$mod SHIFT, S, exec, hyprshot -m region"
-        "$mod SHIFT, W, exec, hyprshot -m window"
+        "$mod SHIFT, W, exec, screenrec-toggle"   # toggle recording (saves to ~/Videos)
         "$mod SHIFT, P, exec, hyprshot -m output"
 
         # Screen lock
@@ -193,6 +211,11 @@
         "float, class:(yazi)"
         "size 900 600, class:(yazi)"
         "center, class:(yazi)"
+
+        # Spotify TUI — floating when opened via SUPER+M
+        "float, class:(spotify-player)"
+        "size 1100 700, class:(spotify-player)"
+        "center, class:(spotify-player)"
       ];
     };
   };
