@@ -128,8 +128,7 @@ in
       bind = [
         # Applications
         "$mod, RETURN, exec, ghostty"
-        "$mod, D, exec, wofi --show drun"
-        "$mod SHIFT, D, exec, wofi --show run"
+        "$mod, D, exec, fuzzel"
         "$mod, E, exec, ghostty --class=yazi -e yazi"
         "$mod, slash, exec, ghostty --class=cheatsheet -e bat --paging=always ~/cheatsheet.md"
         "$mod, M, exec, ghostty --class=spotify-player -e spotify_player"
@@ -219,6 +218,20 @@ in
     };
   };
 
+  # ── Desktop entries (override system defaults) ────────────────────────
+  # Yazi: launch via ghostty directly with --class=yazi so the window rule applies.
+  # Terminal=false so fuzzel doesn't wrap it in a second terminal layer.
+  xdg.desktopEntries.yazi = {
+    name = "Yazi";
+    icon = "yazi";
+    comment = "Blazing fast terminal file manager";
+    exec = "/etc/profiles/per-user/mhg/bin/ghostty --class=yazi -e yazi";
+    terminal = false;
+    type = "Application";
+    categories = [ "Utility" "FileManager" ];
+    mimeType = [ "inode/directory" ];
+  };
+
   # ── Waybar ────────────────────────────────────────────────────────────
   programs.waybar = {
     enable = true;
@@ -231,7 +244,7 @@ in
 
       modules-left = [ "hyprland/workspaces" "hyprland/window" ];
       modules-center = [ "clock" ];
-      modules-right = [ "pulseaudio" "network" "cpu" "memory" "battery" "tray" ];
+      modules-right = [ "custom/vpn" "pulseaudio" "network" "cpu" "memory" "battery" "tray" ];
 
       "hyprland/workspaces" = {
         disable-scroll = true;
@@ -265,6 +278,13 @@ in
         format-ethernet = "ETH";
         format-disconnected = "OFFLINE";
         tooltip-format = "{ifname}: {ipaddr}/{cidr}";
+      };
+
+      "custom/vpn" = {
+        exec = "mullvad status 2>/dev/null | grep -q 'Connected' && echo '{\"text\":\"VPN\",\"class\":\"connected\"}' || echo '{\"text\":\"NO VPN\",\"class\":\"disconnected\"}'";
+        return-type = "json";
+        interval = 5;
+        tooltip = false;
       };
 
       "pulseaudio" = {
@@ -337,6 +357,14 @@ in
         color: #9ece6a;
       }
 
+      #custom-vpn.connected {
+        color: #9ece6a;
+      }
+
+      #custom-vpn.disconnected {
+        color: #f7768e;
+      }
+
       #network {
         color: #2ac3de;
       }
@@ -371,71 +399,33 @@ in
     '';
   };
 
-  # ── Wofi launcher ─────────────────────────────────────────────────────
-  programs.wofi = {
+  # ── Fuzzel launcher ───────────────────────────────────────────────────
+  programs.fuzzel = {
     enable = true;
     settings = {
-      width = 600;
-      height = 400;
-      location = "center";
-      show = "drun";
-      prompt = "Search...";
-      filter_rate = 100;
-      allow_markup = true;
-      no_actions = true;
-      halign = "fill";
-      orientation = "vertical";
-      content_halign = "fill";
-      insensitive = true;
-      allow_images = true;
-      image_size = 24;
-      gtk_dark = true;
+      main = {
+        terminal = "/etc/profiles/per-user/mhg/bin/ghostty -e";
+        width = 40;
+        lines = 15;
+        font = "JetBrainsMono Nerd Font:size=13";
+        prompt = "'Search... '";
+        icon-theme = "hicolor";
+        icons-enabled = true;
+      };
+      colors = {
+        background = "1a1b26f2";
+        text = "c0caf5ff";
+        match = "7aa2f7ff";
+        selection = "283457ff";
+        selection-text = "c0caf5ff";
+        selection-match = "7dcfffff";
+        border = "7aa2f766";
+      };
+      border = {
+        width = 2;
+        radius = 8;
+      };
     };
-    style = ''
-      window {
-        background-color: rgba(26, 27, 38, 0.95);
-        border: 2px solid rgba(122, 162, 247, 0.3);
-        border-radius: 12px;
-        font-family: "JetBrainsMono Nerd Font";
-        font-size: 14px;
-      }
-
-      #input {
-        background-color: rgba(36, 40, 59, 0.8);
-        color: #c0caf5;
-        border: 1px solid rgba(122, 162, 247, 0.2);
-        border-radius: 8px;
-        padding: 8px 12px;
-        margin: 8px;
-      }
-
-      #inner-box {
-        background-color: transparent;
-      }
-
-      #outer-box {
-        padding: 8px;
-      }
-
-      #entry {
-        padding: 6px 12px;
-        border-radius: 6px;
-        color: #c0caf5;
-      }
-
-      #entry:selected {
-        background-color: rgba(122, 162, 247, 0.2);
-        color: #7aa2f7;
-      }
-
-      #text {
-        color: #c0caf5;
-      }
-
-      #text:selected {
-        color: #7aa2f7;
-      }
-    '';
   };
 
   # ── Hypridle (replaces swayidle — uses Hyprland's native idle protocol) ──
@@ -487,6 +477,12 @@ in
       [urgency=high]
       border-color=#f7768e
       default-timeout=0
+
+      [app-name=Spotify]
+      invisible=1
+
+      [app-name=spotify_player]
+      invisible=1
     '';
   };
 }

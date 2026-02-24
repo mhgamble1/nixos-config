@@ -29,7 +29,7 @@
   programs.git = {
     enable = true;
     settings = {
-      user.name  = "Mark Gamble";
+      user.name = "Mark Gamble";
       user.email = "mhgamble1@gmail.com";
       init.defaultBranch = "main";
       # Sign commits via SSH key (switch to gpg later if needed)
@@ -44,7 +44,7 @@
     enable = true;
     enableGitIntegration = true;
     options = {
-      navigate = true;          # n/N to move between diff sections
+      navigate = true; # n/N to move between diff sections
       side-by-side = true;
       line-numbers = true;
       syntax-theme = "TwoDark";
@@ -64,6 +64,7 @@
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
+    TERMINAL = "ghostty";
   };
 
   # ── Cheatsheet ────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@
     | Key                  | Action                          |
     |----------------------|---------------------------------|
     | `SUPER+ENTER`        | Open terminal (Ghostty)         |
-    | `SUPER+D`            | App launcher (wofi)             |
+    | `SUPER+D`            | App launcher (fuzzel)           |
     | `SUPER+Q`            | Close window                    |
     | `SUPER+/`            | This cheatsheet                 |
     | `SUPER+SHIFT+E`      | Exit / logout                   |
@@ -516,5 +517,11 @@
 
     # Spotify TUI client
     spotify-player
+
+    # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
+    xdg-terminal-exec
+
+    zola
+    wrangler
   ];
 }

@@ -35,13 +35,14 @@
 
   # X11 / Wayland base (needed for display manager, XWayland, nvidia config)
   services.xserver.enable = true;
+  services.xserver.excludePackages = [ pkgs.xterm ];
 
   # NVIDIA drivers
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false;
+    powerManagement.enable = true;  # adds nvidia-suspend/resume hooks; fixes Wayland wake
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
@@ -110,23 +111,13 @@
     ];
   };
 
+  # Default terminal for xdg-terminal-exec (used by GIO for Terminal=true desktop apps)
+  xdg.terminal-exec.settings = {
+    default = [ "com.mitchellh.ghostty.desktop" ];
+  };
+
   # Mullvad VPN
   services.mullvad-vpn.enable = true;
-
-  systemd.services.mullvad-autoconnect = {
-    description = "Connect Mullvad VPN to a random New York server";
-    after = [ "mullvad-daemon.service" ];
-    requires = [ "mullvad-daemon.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      ${pkgs.mullvad-vpn}/bin/mullvad relay set location us nyc
-      ${pkgs.mullvad-vpn}/bin/mullvad connect
-    '';
-  };
 
   # Bluetooth
   hardware.bluetooth.enable = true;
