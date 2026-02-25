@@ -65,6 +65,7 @@
     EDITOR = "hx";
     VISUAL = "hx";
     TERMINAL = "ghostty";
+    NIXOS_OZONE_WL = "1";
   };
 
   # ── Cheatsheet ────────────────────────────────────────────────────────
@@ -517,6 +518,9 @@
 
     # Spotify TUI client
     spotify-player
+
+    # Discord
+    discord
 
     # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
     xdg-terminal-exec
