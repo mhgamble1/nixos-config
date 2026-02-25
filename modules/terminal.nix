@@ -126,16 +126,6 @@
       clipboard-read = "allow";
       clipboard-write = "allow";
 
-      # Keybinds — pane navigation (vim-style)
-      keybind = [
-        "ctrl+shift+h=goto_split:left"
-        "ctrl+shift+l=goto_split:right"
-        "ctrl+shift+k=goto_split:top"
-        "ctrl+shift+j=goto_split:bottom"
-        "ctrl+shift+backslash=new_split:right"
-        "ctrl+shift+minus=new_split:down"
-        "ctrl+shift+q=close_surface"
-      ];
     };
   };
 
@@ -211,11 +201,6 @@
 
       # Use vim keybindings in fish
       fish_vi_key_bindings
-
-      # Auto-attach to main tmux session (or create it) — skip if already inside tmux
-      if status is-interactive && not set -q TMUX
-        exec tmux new-session -A -s main
-      end
     '';
 
     shellAliases = {

@@ -25,6 +25,8 @@ in
     pavucontrol  # Audio control GUI
     networkmanagerapplet  # Network tray applet
     screenrec-toggle  # Toggle script for wl-screenrec
+    playerctl    # Media key control (play/pause/next/prev)
+    brightnessctl # Backlight brightness control
   ];
 
   # Hyprland compositor configuration
@@ -122,6 +124,15 @@ in
         disable_splash_rendering = true;  # suppress version notification on launch
       };
 
+      # ── Named workspaces ──────────────────────────────────────────────
+      workspace = [
+        "1, name:code"
+        "2, name:web"
+        "3, name:comms"
+        "4, name:music"
+        "5, name:scratch"
+      ];
+
       # ── Keybinds ──────────────────────────────────────────────────────
       "$mod" = "SUPER";
 
@@ -178,6 +189,9 @@ in
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
 
+        # Cycle recent workspaces
+        "$mod, Tab, workspace, previous"
+
         # Screenshots (hyprshot) + screen recording (wl-screenrec)
         "$mod SHIFT, S, exec, hyprshot -m region"
         "$mod SHIFT, W, exec, screenrec-toggle"   # toggle recording (saves to ~/Videos)
@@ -189,6 +203,20 @@ in
         # Reload / exit
         "$mod SHIFT, R, exec, hyprctl reload"
         "$mod SHIFT, E, exit,"
+
+        # Media controls
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioPlay, exec, playerctl play-pause"
+        ", XF86AudioNext, exec, playerctl next"
+        ", XF86AudioPrev, exec, playerctl previous"
+      ];
+
+      # Repeatable binds (held key repeats action — good for volume/brightness)
+      binde = [
+        ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
       ];
 
       # Mouse binds for window resize/move
@@ -249,7 +277,7 @@ in
       "hyprland/workspaces" = {
         disable-scroll = true;
         all-outputs = true;
-        format = "{id}";
+        format = "{name}";
       };
 
       "hyprland/window" = {
