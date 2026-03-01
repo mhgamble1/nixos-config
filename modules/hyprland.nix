@@ -16,16 +16,16 @@ in
 {
   # Screenshot tools and Wayland utilities
   home.packages = with pkgs; [
-    hyprshot     # Native Hyprland screenshot tool
-    grim         # Wayland screenshot utility (backend)
-    slurp        # Region selection for screenshots
+    hyprshot # Native Hyprland screenshot tool
+    grim # Wayland screenshot utility (backend)
+    slurp # Region selection for screenshots
     wl-screenrec # Screen recorder
-    libnotify    # notify-send for recording notifications
-    swaylock     # Screen locker (hypridle calls it directly)
-    pavucontrol  # Audio control GUI
-    networkmanagerapplet  # Network tray applet
-    screenrec-toggle  # Toggle script for wl-screenrec
-    playerctl    # Media key control (play/pause/next/prev)
+    libnotify # notify-send for recording notifications
+    swaylock # Screen locker (hypridle calls it directly)
+    pavucontrol # Audio control GUI
+    networkmanagerapplet # Network tray applet
+    screenrec-toggle # Toggle script for wl-screenrec
+    playerctl # Media key control (play/pause/next/prev)
     brightnessctl # Backlight brightness control
   ];
 
@@ -121,7 +121,7 @@ in
       misc = {
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
-        disable_splash_rendering = true;  # suppress version notification on launch
+        disable_splash_rendering = true; # suppress version notification on launch
       };
 
       # ── Named workspaces ──────────────────────────────────────────────
@@ -148,8 +148,8 @@ in
         "$mod, Q, killactive,"
         "$mod, F, fullscreen, 0"
         "$mod SHIFT, F, togglefloating,"
-        "$mod, P, pseudo,"       # dwindle pseudotile
-        "$mod, S, togglesplit,"  # dwindle split direction
+        "$mod, P, pseudo," # dwindle pseudotile
+        "$mod, S, togglesplit," # dwindle split direction
 
         # Focus — vim keys
         "$mod, h, movefocus, l"
@@ -194,7 +194,7 @@ in
 
         # Screenshots (hyprshot) + screen recording (wl-screenrec)
         "$mod SHIFT, S, exec, hyprshot -m region"
-        "$mod SHIFT, W, exec, screenrec-toggle"   # toggle recording (saves to ~/Videos)
+        "$mod SHIFT, W, exec, screenrec-toggle" # toggle recording (saves to ~/Videos)
         "$mod SHIFT, P, exec, hyprshot -m output"
 
         # Screen lock
@@ -461,22 +461,22 @@ in
     enable = true;
     settings = {
       general = {
-        lock_cmd         = "pidof swaylock || swaylock -f"; # don't double-lock
-        before_sleep_cmd = "swaylock -f";                  # lock before suspend
-        after_sleep_cmd  = "hyprctl dispatch dpms on";     # display on after resume
+        lock_cmd = "pidof swaylock || swaylock -f"; # don't double-lock
+        before_sleep_cmd = "swaylock -f"; # lock before suspend
+        after_sleep_cmd = "hyprctl dispatch dpms on"; # display on after resume
       };
       listener = [
         {
-          timeout   = 1500;   # 25 min: lock screen
+          timeout = 1500; # 25 min: lock screen
           on-timeout = "swaylock -f";
         }
         {
-          timeout   = 1800;   # 30 min: display off
+          timeout = 1800; # 30 min: display off
           on-timeout = "hyprctl dispatch dpms off";
-          on-resume  = "hyprctl dispatch dpms on";   # reliably re-enabled by Hyprland IPC
+          on-resume = "hyprctl dispatch dpms on"; # reliably re-enabled by Hyprland IPC
         }
         {
-          timeout   = 5400;   # 90 min: suspend
+          timeout = 5400; # 90 min: suspend
           on-timeout = "systemctl suspend";
         }
       ];

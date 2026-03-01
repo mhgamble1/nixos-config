@@ -42,7 +42,7 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = true;  # adds nvidia-suspend/resume hooks; fixes Wayland wake
+    powerManagement.enable = true; # adds nvidia-suspend/resume hooks; fixes Wayland wake
     powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
@@ -116,6 +116,16 @@
     default = [ "com.mitchellh.ghostty.desktop" ];
   };
 
+  services.flatpak.enable = true;
+  systemd.services.flatpak-repo = {
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
+
+
   # Mullvad VPN
   services.mullvad-vpn.enable = true;
 
@@ -161,6 +171,7 @@
     gh
     spotify
     cifs-utils
+    zathura
   ];
 
   system.stateVersion = "25.11";
