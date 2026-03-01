@@ -522,6 +522,9 @@
     # Discord
     discord
 
+    # Note-taking
+    zk
+
     # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
     xdg-terminal-exec
 
