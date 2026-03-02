@@ -129,6 +129,19 @@
   # Mullvad VPN
   services.mullvad-vpn.enable = true;
 
+  # Allow LAN traffic to bypass the VPN tunnel (required for NAS at 192.168.1.100)
+  systemd.services.mullvad-lan-allow = {
+    description = "Allow LAN access through Mullvad VPN";
+    after = [ "mullvad-daemon.service" ];
+    wants = [ "mullvad-daemon.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad lan set allow";
+      RemainAfterExit = true;
+    };
+  };
+
   # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -167,7 +180,6 @@
   environment.systemPackages = with pkgs; [
     wget
     git
-    brave
     gh
     spotify
     cifs-utils

@@ -92,22 +92,22 @@
       selection-foreground = "#c0caf5";
 
       palette = [
-        "0=#15161e"   # black
-        "1=#f7768e"   # red
-        "2=#9ece6a"   # green
-        "3=#e0af68"   # yellow
-        "4=#7aa2f7"   # blue
-        "5=#bb9af7"   # magenta
-        "6=#7dcfff"   # cyan
-        "7=#a9b1d6"   # white
-        "8=#414868"   # bright black
-        "9=#f7768e"   # bright red
-        "10=#9ece6a"  # bright green
-        "11=#e0af68"  # bright yellow
-        "12=#7aa2f7"  # bright blue
-        "13=#bb9af7"  # bright magenta
-        "14=#7dcfff"  # bright cyan
-        "15=#c0caf5"  # bright white
+        "0=#15161e" # black
+        "1=#f7768e" # red
+        "2=#9ece6a" # green
+        "3=#e0af68" # yellow
+        "4=#7aa2f7" # blue
+        "5=#bb9af7" # magenta
+        "6=#7dcfff" # cyan
+        "7=#a9b1d6" # white
+        "8=#414868" # bright black
+        "9=#f7768e" # bright red
+        "10=#9ece6a" # bright green
+        "11=#e0af68" # bright yellow
+        "12=#7aa2f7" # bright blue
+        "13=#bb9af7" # bright magenta
+        "14=#7dcfff" # bright cyan
+        "15=#c0caf5" # bright white
       ];
 
       # Window
@@ -132,8 +132,7 @@
   # ── tmux ──────────────────────────────────────────────────────────────
   programs.tmux = {
     enable = true;
-    prefix = "C-a";            # Ctrl+a as prefix (instead of Ctrl+b)
-    baseIndex = 1;             # Windows start at 1, not 0
+    baseIndex = 1; # Windows start at 1, not 0
     historyLimit = 10000;
     mouse = true;
     terminal = "tmux-256color";
@@ -205,44 +204,44 @@
 
     shellAliases = {
       # Navigation
-      ".."   = "cd ..";
-      "..."  = "cd ../..";
+      ".." = "cd ..";
+      "..." = "cd ../..";
       # eza replaces ls
-      ls    = "eza --icons --group-directories-first";
-      ll    = "eza -lah --icons --group-directories-first --git";
-      la    = "eza -lah --icons --group-directories-first";
-      lt    = "eza --tree --icons --level=2";
-      lta   = "eza --tree --icons --level=2 -a";
+      ls = "eza --icons --group-directories-first";
+      ll = "eza -lah --icons --group-directories-first --git";
+      la = "eza -lah --icons --group-directories-first";
+      lt = "eza --tree --icons --level=2";
+      lta = "eza --tree --icons --level=2 -a";
       # zoxide: use 'z' to jump, 'zi' for interactive
       # (zoxide is initialized via programs.zoxide.enableFishIntegration)
 
       # Git shortcuts
-      g     = "git";
-      gs    = "git status";
-      ga    = "git add";
-      gc    = "git commit";
-      gp    = "git push";
-      gl    = "git log --oneline --graph --decorate";
-      gd    = "git diff";
+      g = "git";
+      gs = "git status";
+      ga = "git add";
+      gc = "git commit";
+      gp = "git push";
+      gl = "git log --oneline --graph --decorate";
+      gd = "git diff";
 
       # Modern utils
-      cat   = "bat";
-      diff  = "difft";    # structural diff
-      du    = "dust";     # intuitive disk usage
-      df    = "duf";      # readable disk free
-      ps    = "procs";    # readable process list
-      top   = "btm";      # bottom system monitor
+      cat = "bat";
+      diff = "difft"; # structural diff
+      du = "dust"; # intuitive disk usage
+      df = "duf"; # readable disk free
+      ps = "procs"; # readable process list
+      top = "btm"; # bottom system monitor
 
       # Claude Code (up-to-date via flake, alias avoids typing the full nix run command)
       claude = "nix run github:sadjow/claude-code-nix --";
 
       # NixOS
-      nrs   = "sudo nixos-rebuild switch";
-      nrsu  = "sudo nixos-rebuild switch --upgrade";
-      nrb   = "sudo nixos-rebuild boot";
+      nrs = "sudo nixos-rebuild switch";
+      nrsu = "sudo nixos-rebuild switch --upgrade";
+      nrb = "sudo nixos-rebuild boot";
       # sudoedit: safely edits root files in $EDITOR without running editor as root
-      ne    = "sudoedit /etc/nixos/configuration.nix";
-      nhm   = "sudoedit /etc/nixos/home.nix";
+      ne = "sudoedit /etc/nixos/configuration.nix";
+      nhm = "sudoedit /etc/nixos/home.nix";
     };
 
     functions = {
