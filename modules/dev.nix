@@ -135,5 +135,8 @@
     # SQLite
     sqlite      # SQLite CLI
     litecli     # Better SQLite CLI (autocomplete, syntax highlighting)
+
+    # AI
+    opencode    # AI coding agent for the terminal
   ];
 }
