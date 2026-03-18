@@ -150,6 +150,8 @@
   # Fish shell — must be enabled system-wide to appear in /etc/shells
   programs.fish.enable = true;
 
+  programs.nix-ld.enable = true;
+
   # User account
   users.users.mhg = {
     isNormalUser = true;
@@ -180,10 +182,8 @@
   environment.systemPackages = with pkgs; [
     wget
     git
-    gh
-    spotify
     cifs-utils
-    zathura
+    vulkan-tools
   ];
 
   system.stateVersion = "25.11";

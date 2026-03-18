@@ -25,7 +25,7 @@
         };
 
         file-picker = {
-          hidden = false;  # show dotfiles
+          hidden = false; # show dotfiles
         };
 
         indent-guides = {
@@ -111,32 +111,35 @@
     enable = true;
     env = {
       GOPATH = "/home/mhg/go";
-      GOBIN  = "/home/mhg/go/bin";
+      GOBIN = "/home/mhg/go/bin";
     };
   };
 
   # ── Dev packages ──────────────────────────────────────────────────────
   home.packages = with pkgs; [
-    # Go tooling
-    gopls       # Go LSP
-    gotools     # goimports, godoc, etc.
-    go-tools    # staticcheck
+    # Go
+    gopls
+    gotools
+    go-tools
 
     # Python
-    uv          # fast Python package/project manager
-    python3     # system Python fallback
-    pyright     # Python LSP (type checking + completion)
-    ruff        # Python linter + formatter (also LSP)
+    uv
+    python3
+    pyright
+    ruff
 
     # Nix
-    nil         # Nix LSP
+    nil # Nix LSP
     nixpkgs-fmt # Nix formatter
 
-    # SQLite
-    sqlite      # SQLite CLI
-    litecli     # Better SQLite CLI (autocomplete, syntax highlighting)
+    sqlite
+    litecli
+    opencode
 
-    # AI
-    opencode    # AI coding agent for the terminal
+    gh
   ];
+
+  programs.zed-editor = {
+    enable = true;
+  };
 }

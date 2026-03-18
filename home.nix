@@ -28,6 +28,7 @@
   # Git
   programs.git = {
     enable = true;
+    lfs.enable = true;
     settings = {
       user.name = "Mark Gamble";
       user.email = "mhgamble1@gmail.com";
@@ -513,6 +514,8 @@
     htop
     unzip
 
+    calibre
+
     # Wayland utilities
     wlr-randr
 
@@ -530,5 +533,14 @@
 
     zola
     wrangler
+
+    # Media / docs
+    vlc
+    spotify
+    zathura
+    gnome-text-editor
+
+    # Downloads
+    aria2
   ];
 }
