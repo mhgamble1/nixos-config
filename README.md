@@ -8,6 +8,7 @@ NixOS system configuration for a single Wayland/Hyprland workstation. Declarativ
 
 - NVIDIA GPU (proprietary drivers, Wayland via GBM)
 - Boot: GRUB → NVMe SSD
+- Keyboard: Glove80 with Tailorkey 4.2m (bilateral homerow mods)
 
 ---
 
@@ -15,36 +16,36 @@ NixOS system configuration for a single Wayland/Hyprland workstation. Declarativ
 
 ```
 /etc/nixos/
-├── configuration.nix      # System: boot, hardware, networking, services, users
+├── configuration.nix           # System: boot, hardware, networking, services, users
 ├── hardware-configuration.nix  # Auto-generated — do not hand-edit
-├── home.nix               # Home Manager root: git, SSH, yazi, cheatsheet, per-user packages
+├── home.nix                    # Home Manager root: git, SSH, yazi, per-user packages
 ├── modules/
-│   ├── hyprland.nix       # Hyprland WM, waybar, wofi, mako, keybinds, window rules
-│   ├── terminal.nix       # Ghostty, tmux, fish, starship, bat, fzf, zoxide, modern utils
-│   ├── dev.nix            # Helix editor, Go, Python/uv, Nix LSP, SQLite
-│   └── theming.nix        # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
-└── smb-credentials        # NAS mount credentials (not committed)
+│   ├── hyprland.nix            # Hyprland WM, waybar, fuzzel, mako, keybinds, window rules
+│   ├── terminal.nix            # Ghostty, tmux, fish, starship, bat, fzf, zoxide, modern utils
+│   ├── dev.nix                 # Helix editor, Go, Python/uv, Nix LSP, SQLite
+│   └── theming.nix             # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
+└── smb-credentials             # NAS mount credentials (not committed)
 ```
 
 ---
 
 ## Key applications
 
-| Role            | Tool             | Notes                                       |
-|-----------------|------------------|---------------------------------------------|
-| WM              | Hyprland         | Wayland compositor, NVIDIA-tuned            |
-| Bar             | Waybar           | Top bar: workspaces, clock, CPU/MEM/NET/VOL |
-| Launcher        | wofi             | App launcher (`SUPER+D`)                    |
-| Notifications   | mako             | Desktop notifications                        |
-| Terminal        | Ghostty          | GPU-accelerated, Tokyo Night theme          |
-| Multiplexer     | tmux             | Auto-attaches to session `main` on login    |
-| Shell           | fish             | Vi keybindings, starship prompt             |
-| Editor          | Helix            | Modal, LSP, Tokyo Night theme               |
-| File manager    | yazi             | TUI, opens floating via `SUPER+E`           |
-| Music           | spotify_player   | TUI Spotify client, opens floating via `SUPER+M` |
-| Browser         | Firefox + Brave  | Both installed                              |
-| VPN             | Mullvad          | Auto-connects to NYC on boot                |
-| NAS             | Samba/CIFS       | Automounts `/mnt/nas` on access             |
+| Role          | Tool           | Notes                                            |
+|---------------|----------------|--------------------------------------------------|
+| WM            | Hyprland       | Wayland compositor, NVIDIA-tuned, dwindle layout |
+| Bar           | Waybar         | Top bar: workspaces, clock, CPU/MEM/NET/VOL      |
+| Launcher      | fuzzel         | App launcher (`SUPER+D`)                         |
+| Notifications | mako           | Desktop notifications                            |
+| Terminal      | Ghostty        | GPU-accelerated, Tokyo Night theme               |
+| Shell         | fish           | Vi keybindings, starship prompt                  |
+| Multiplexer   | tmux           | SSH/remote only — not auto-started locally       |
+| Editor        | Helix          | Modal, LSP, Tokyo Night theme                    |
+| File manager  | yazi           | TUI, opens floating via `SUPER+E`                |
+| Music         | spotify_player | TUI Spotify client, opens floating via `SUPER+M` |
+| Browser       | Firefox        |                                                  |
+| VPN           | Mullvad        | Auto-connects on boot                            |
+| NAS           | Samba/CIFS     | Automounts `/mnt/nas` on access                  |
 
 ---
 
@@ -53,9 +54,8 @@ NixOS system configuration for a single Wayland/Hyprland workstation. Declarativ
 ### Apply config changes
 
 ```bash
-# Edit a .nix file, then:
-nrs                          # sudo nixos-rebuild switch
-nrsu                         # + pull new package versions from upstream
+nrs     # sudo nixos-rebuild switch
+nrsu    # + pull new package versions from upstream
 
 # Rollback if something breaks:
 sudo nixos-rebuild switch --rollback
@@ -66,7 +66,7 @@ sudo nixos-rebuild switch --rollback
 ```bash
 ne      # sudoedit /etc/nixos/configuration.nix
 nhm     # sudoedit /etc/nixos/home.nix
-# For modules, open directly in helix:
+# For modules, open directly:
 hx /etc/nixos/modules/hyprland.nix
 ```
 
@@ -82,17 +82,14 @@ gp           # git push (via SSH)
 
 ---
 
-## Remote sync: when to pull
+## Remote sync
 
-This repo is primarily **pushed from one machine**. The remote is a backup and a bootstrap source — you don't need to pull during normal day-to-day use.
-
-### When you *would* pull
+This repo is primarily **pushed from one machine**. The remote is a backup and a bootstrap source.
 
 | Scenario | What to do |
 |---|---|
 | **New machine / fresh NixOS install** | `git clone git@github.com:mhgamble1/nixos-config.git /etc/nixos && nrs` |
 | **Reinstall on the same machine** | Same as above — the remote is your restore point |
-| **Editing config on a second machine** | Pull before editing, push after, then pull + `nrs` on the primary |
 | **Recovering from a broken store** | Clone fresh, run `nixos-rebuild switch` |
 
 ### Bootstrap on a new machine
@@ -103,36 +100,31 @@ This repo is primarily **pushed from one machine**. The remote is a backup and a
 nixos-generate-config --root /mnt
 
 # 3. Replace /etc/nixos with this repo
-cd /mnt/etc
-rm -rf nixos
+cd /mnt/etc && rm -rf nixos
 git clone git@github.com:mhgamble1/nixos-config.git nixos
 
 # 4. Replace hardware-configuration.nix with the generated one
 cp /mnt/etc/nixos/hardware-configuration.nix.bak nixos/hardware-configuration.nix
 
 # 5. Rebuild
-nixos-install --flake .#hostname    # or nixos-rebuild switch if already booted
+nixos-install  # or nixos-rebuild switch if already booted
 ```
 
-> **Note:** `hardware-configuration.nix` is machine-specific (disk UUIDs, detected hardware).
-> Keep the auto-generated one for each machine; everything else is portable.
+> `hardware-configuration.nix` is machine-specific (disk UUIDs, detected hardware). Keep the auto-generated one per machine; everything else is portable.
 
 ---
 
 ## SSH and git authentication
 
-Authentication to GitHub uses an ed25519 SSH key (`~/.ssh/id_ed25519`).
-The SSH client config (`programs.ssh` in `home.nix`) routes `github.com` connections through this key automatically.
+Authentication to GitHub uses an ed25519 SSH key (`~/.ssh/id_ed25519`). The SSH client config routes `github.com` connections through this key automatically.
 
-When setting up a new machine, generate a new key and add it to GitHub before cloning:
+When setting up a new machine:
 
 ```bash
 ssh-keygen -t ed25519 -C "mhgamble1@gmail.com"
-cat ~/.ssh/id_ed25519.pub   # copy this to GitHub → Settings → SSH keys
+cat ~/.ssh/id_ed25519.pub   # copy to GitHub → Settings → SSH keys
 ssh -T git@github.com       # verify
 ```
-
-> **Future plan:** Replace the software key with a YubiKey FIDO2 resident key (see Phase 11 in the cheatsheet). The YubiKey key is hardware-backed and works across machines without copying private keys.
 
 ---
 
@@ -143,8 +135,6 @@ Claude is **not** installed as a system package. It runs via a flake from the fi
 ```fish
 claude   # expands to: nix run github:sadjow/claude-code-nix --
 ```
-
-This keeps Claude always up-to-date without waiting for nixpkgs to update the package.
 
 ---
 
@@ -164,20 +154,18 @@ sudo nix-store --optimise
 
 ### Near-term
 
-- [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key; add to GitHub and NAS (see cheatsheet Phase 11)
-- [ ] **Commit signing** — enable `commit.gpgsign = true` in `home.nix` once SSH signing key is confirmed working
+- [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key
+- [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
 - [ ] **Hostname** — rename from `nixos` to something meaningful in `configuration.nix`
-- [ ] **GRUB theme** — add a clean GRUB theme to match the Tokyo Night aesthetic
 
 ### Medium-term
 
-- [ ] **Flake-ify the NixOS config** — convert `configuration.nix` to a proper `flake.nix` with pinned nixpkgs input for reproducible builds
-- [ ] **Multi-host support** — once flake-based, support multiple host configurations (e.g. laptop vs desktop) from the same repo
-- [ ] **Secrets management** — use `agenix` or `sops-nix` for managing secrets (NAS credentials, API keys) declaratively instead of untracked files
-- [ ] **Automated garbage collection** — add a systemd timer to run `nix-collect-garbage -d` weekly
+- [ ] **Flake-ify the NixOS config** — convert to `flake.nix` with pinned nixpkgs for reproducible builds
+- [ ] **Multi-host support** — once flake-based, support laptop vs desktop from the same repo
+- [ ] **Secrets management** — `agenix` or `sops-nix` for NAS credentials and API keys
 
 ### Long-term
 
-- [ ] **NAS integration** — Jellyfin or similar media server on the NAS, with the desktop as a thin client
-- [ ] **Raspberry Pi NAS** — NixOS on the Pi with `nixos-hardware`, managed from the same repo
-- [ ] **Home Assistant** — home automation, running on NAS or a dedicated Pi
+- [ ] **NAS integration** — Jellyfin or similar media server, desktop as thin client
+- [ ] **Raspberry Pi NAS** — NixOS on the Pi, managed from this repo
+- [ ] **Home Assistant** — home automation on NAS or dedicated Pi

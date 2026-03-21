@@ -31,7 +31,8 @@ This file is the source of truth. Update it whenever binds change.
 | `SUPER+D` | App launcher (Fuzzel) |
 | `SUPER+E` | File manager (Yazi, floating) |
 | `SUPER+M` | Music (spotify-player, floating) |
-| `SUPER+/` | Cheatsheet (bat, floating) |
+| `SUPER+/` | Personal cheatsheet (bat, floating) |
+| `` SUPER+` `` | Toggle Hermes scratchpad (SSH session) |
 
 ### Window Management
 | Binding | Action |
@@ -39,8 +40,8 @@ This file is the source of truth. Update it whenever binds change.
 | `SUPER+Q` | Close active window |
 | `SUPER+F` | Toggle fullscreen |
 | `SUPER+SHIFT+F` | Toggle floating |
-| `SUPER+P` | Pseudotile (float within tile) |
-| `SUPER+S` | Toggle split direction |
+| `SUPER+P` | Pseudotile (float within tile at preferred size) |
+| `SUPER+S` | Toggle split direction (horizontal ↔ vertical) |
 
 ### Focus
 | Binding | Action |
@@ -70,6 +71,14 @@ This file is the source of truth. Update it whenever binds change.
 | `SUPER+SHIFT+1…9` | Move window to workspace 1–9 |
 | `SUPER+Tab` | Toggle most recent workspace |
 | `SUPER+scroll` | Cycle workspaces |
+
+### Scratchpad (Hermes)
+| Binding | Action |
+|---------|--------|
+| `` SUPER+` `` | Toggle Hermes scratchpad (spawns SSH session on first use) |
+| `` SUPER+SHIFT+` `` | Move focused window into the Hermes scratchpad |
+
+Hermes is a special floating workspace (`special:hermes`). First press spawns a Ghostty window → fish → `hermes` alias (SSH + tmux on the VPS). Subsequent presses show/hide it.
 
 ### Media & System
 | Binding | Action |
@@ -101,12 +110,68 @@ This file is the source of truth. Update it whenever binds change.
 | Binding | Action |
 |---------|--------|
 | `SUPER+LMB drag` | Move floating window |
-| `SUPER+RMB drag` | Resize window |
+| `SUPER+RMB drag` | Resize any window |
 
-### Known Gaps
-- No keyboard-driven window resize (submap would solve this)
-- Workspaces 6–9 unnamed
-- No scratchpad / special workspace
+---
+
+## Window Layout Mental Model
+
+Layout engine is **dwindle**. Understanding this is key to understanding why windows end up where they do.
+
+### How dwindle works
+
+Every new tiled window splits the currently focused tile in half. The split is either horizontal or vertical — toggled with `SUPER+S`.
+
+```
+1 window:          2 windows:         3 windows (third splits right tile):
+┌─────────┐        ┌────┬────┐        ┌────┬──┬──┐
+│         │        │    │    │        │    │  │  │
+│    A    │        │ A  │ B  │        │ A  │B │C │
+│         │        │    │    │        │    │  │  │
+└─────────┘        └────┴────┘        └────┴──┴──┘
+```
+
+If you split the left tile instead, you get a different tree:
+
+```
+3 windows (third splits left tile):
+┌──┬──┬────┐
+│  │  │    │
+│A │C │ B  │
+│  │  │    │
+└──┴──┴────┘
+```
+
+### Current tools for layout control
+
+| What you want | How to do it |
+|---|---|
+| Focus a window | `SUPER+hjkl` |
+| Swap two windows | `SUPER+SHIFT+hjkl` |
+| Change which way the next split goes | `SUPER+S` (before opening the next window) |
+| Make a window fullscreen | `SUPER+F` |
+| Float a window, then reposition freely | `SUPER+SHIFT+F`, then `SUPER+LMB drag` |
+| Float a window at its preferred size | `SUPER+P` (pseudotile) |
+| Resize any window with mouse | `SUPER+RMB drag` |
+
+### What you can't do yet (keyboard-only)
+
+- **Resize tiles without mouse** — no resize submap exists yet
+- **Snap a window to a third of the screen** — would need explicit pixel-based move/resize binds or a resize submap
+
+### Common patterns
+
+**Two windows side by side (50/50):**
+Open window A, open window B — you get a 50/50 split. Toggle the split direction with `SUPER+S` first if you want them stacked instead.
+
+**Main + sidebar (two windows, unequal):**
+Not directly possible with keyboard alone right now. Open both, then `SUPER+RMB drag` to resize the boundary.
+
+**Three windows on a widescreen:**
+Open A → B (splits to 50/50) → focus B → open C (splits B's half into two quarters). You end up with A at 50% and B+C each at 25%. To get a center window at ~33%, you'd need resize binds (see Optimization Backlog).
+
+**Quick scratch/reference window:**
+Float it with `SUPER+SHIFT+F`, size it with `SUPER+RMB drag`, position with `SUPER+LMB drag`. Or use the Hermes scratchpad for a terminal.
 
 ---
 
@@ -151,9 +216,6 @@ All local layout is handled by Hyprland — no tmux splits in local sessions.
 ## Ghostty
 
 Ghostty is used as a plain terminal emulator. Splits are disabled — use Hyprland windows instead.
-
-### Tabs (if needed)
-Ghostty's built-in tab support is available via the GTK tab bar. No custom keybinds configured.
 
 ---
 
@@ -290,8 +352,8 @@ Ghostty's built-in tab support is available via the GTK tab bar. No custom keybi
 
 ### Near-term
 - [ ] **Keyboard resize submap** — `SUPER+R` enters resize mode, `hjkl` resize, `Esc` exits
+- [ ] **Thirds / center layout binds** — explicit pixel-based move+resize binds for widescreen: left-third, center-third, right-third, center-half
 - [ ] **Name workspaces 6–9** if they get regular use
-- [ ] **Scratchpad** — `SUPER+grave` toggle, `SUPER+SHIFT+grave` send to scratchpad
 
 ### Longer-term (keyboard firmware)
 - [ ] **Navigation layer in ZMK** — hold thumb key → right hand becomes nav (hjkl, word jump, page scroll) in every app
@@ -301,6 +363,11 @@ Ghostty's built-in tab support is available via the GTK tab bar. No custom keybi
 ---
 
 ## Changelog
+
+### 2026-03 — Docs cleanup
+- **Added** Hermes scratchpad section (was implemented but undocumented).
+- **Added** Window Layout Mental Model section explaining dwindle and current layout tools.
+- **Fixed** README outdated entries (wofi → fuzzel, tmux auto-attach removed, Brave dropped).
 
 ### 2026-02 — Layout unification & HRM commitment
 - **Removed** tmux auto-attach from Fish login. tmux is now SSH/remote only.
