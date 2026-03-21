@@ -127,6 +127,12 @@
 
 
   # Mullvad VPN
+  # Ollama — local LLM inference with CUDA acceleration
+  services.ollama = {
+    enable = true;
+    acceleration = "cuda";
+  };
+
   services.mullvad-vpn.enable = true;
 
   # Allow LAN traffic to bypass the VPN tunnel (required for NAS at 192.168.1.100)

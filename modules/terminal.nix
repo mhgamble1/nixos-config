@@ -55,6 +55,9 @@
 
     # Hex viewer
     hexyl
+
+    # TUI git client
+    lazygit
   ];
 
   # zoxide — smarter cd with frecency ranking
@@ -200,6 +203,10 @@
 
       # Use vim keybindings in fish
       fish_vi_key_bindings
+
+      # Restore emacs-style line navigation in insert mode
+      bind --mode insert \ca beginning-of-line
+      bind --mode insert \ce end-of-line
     '';
 
     shellAliases = {
@@ -249,6 +256,33 @@
       cht = {
         description = "View the system cheatsheet";
         body = "bat --paging=always ~/cheatsheet.md";
+      };
+
+      # SSH into Hermes VPS and attach-or-create the persistent tmux session.
+      # Requires the 'hermes' SSH host block configured in programs.ssh (home.nix).
+      hermes = {
+        description = "Attach to Hermes AI agent on VPS (tmux session: hermes)";
+        body = ''ssh -t hermes "tmux new-session -A -s hermes"'';
+      };
+
+      # Quick Capture: append a timestamped note to ~/capture.md on the VPS.
+      # Usage:  capture "thought"   OR   echo "thought" | capture
+      # Requires passwordless SSH access to the 'hermes' host.
+      capture = {
+        description = "Append a timestamped note to ~/capture.md on Hermes VPS";
+        body = ''
+          set -l text (string join " " $argv)
+          if test -z "$text"
+            set text (cat)
+          end
+          if test -z "$text"
+            echo "Usage: capture <thought>  or  echo <thought> | capture" >&2
+            return 1
+          end
+          set -l ts (date "+%Y-%m-%d %H:%M")
+          printf -- "- %s %s\n" $ts $text | ssh hermes "cat >> ~/capture.md"
+          and echo "Captured."
+        '';
       };
     };
   };

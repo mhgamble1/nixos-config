@@ -4,3 +4,4 @@ result-*
 
 # Secrets
 smb-credentials
+secrets.nix

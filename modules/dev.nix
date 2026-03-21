@@ -132,6 +132,8 @@
     nil # Nix LSP
     nixpkgs-fmt # Nix formatter
 
+    bun
+
     sqlite
     litecli
     opencode

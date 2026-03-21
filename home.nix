@@ -1,5 +1,9 @@
 { config, pkgs, lib, ... }:
 
+let
+  secrets = import ./secrets.nix;
+in
+
 {
   imports = [
     ./modules/hyprland.nix
@@ -22,6 +26,16 @@
     matchBlocks."github.com" = {
       user = "git";
       identityFile = "~/.ssh/id_ed25519";
+    };
+    # Hermes VPS — AI agent / remote workspace.
+    # Fill in your actual VPS IP/hostname and username below.
+    matchBlocks."hermes" = {
+      hostname = secrets.hermes.hostname;
+      user = secrets.hermes.user;
+      identityFile = "~/.ssh/id_ed25519";
+      # Keep connection alive to prevent SSH drops during long Hermes sessions.
+      serverAliveInterval = 60;
+      serverAliveCountMax = 10;
     };
   };
 
@@ -145,7 +159,7 @@
 
     ## PHASE 4 — TMUX (multiplexer)
 
-    **Prefix = `Ctrl+a`** (press, release, then the key)
+    **Prefix = `Ctrl+b`** (press, release, then the key)
 
     ### Sessions
     | Command / Key       | Action                          |

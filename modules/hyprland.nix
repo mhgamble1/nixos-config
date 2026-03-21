@@ -1,6 +1,18 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Toggle the Hermes scratchpad: spawns ghostty→hermes SSH session on first press,
+  # then shows/hides the special:hermes workspace on subsequent presses.
+  hermes-toggle = pkgs.writeShellScriptBin "hermes-toggle" ''
+    if hyprctl clients -j | ${pkgs.jq}/bin/jq -e 'any(.[]; .class == "hermes")' > /dev/null 2>&1; then
+      hyprctl dispatch togglespecialworkspace hermes
+    else
+      ghostty --class=hermes -e fish -c hermes &
+      sleep 0.5
+      hyprctl dispatch togglespecialworkspace hermes
+    fi
+  '';
+
   screenrec-toggle = pkgs.writeShellScriptBin "screenrec-toggle" ''
     if pgrep -x wl-screenrec > /dev/null; then
       pkill -INT wl-screenrec
@@ -25,6 +37,7 @@ in
     pavucontrol # Audio control GUI
     networkmanagerapplet # Network tray applet
     screenrec-toggle # Toggle script for wl-screenrec
+    hermes-toggle # Toggle Hermes scratchpad (special:hermes workspace)
     playerctl # Media key control (play/pause/next/prev)
     brightnessctl # Backlight brightness control
   ];
@@ -137,6 +150,14 @@ in
       "$mod" = "SUPER";
 
       bind = [
+        # Hermes scratchpad — toggle with SUPER+` (backtick)
+        # First press: spawns Ghostty → SSH → tmux hermes session.
+        # Subsequent presses: show/hide the floating special workspace.
+        "$mod, grave, exec, hermes-toggle"
+
+        # Move the focused window INTO the hermes scratchpad
+        "$mod SHIFT, grave, movetoworkspace, special:hermes"
+
         # Applications
         "$mod, RETURN, exec, ghostty"
         "$mod, D, exec, fuzzel"
@@ -242,6 +263,12 @@ in
         "float, class:(spotify-player)"
         "size 1100 700, class:(spotify-player)"
         "center, class:(spotify-player)"
+
+        # Hermes scratchpad — auto-assign to special:hermes workspace
+        "workspace special:hermes silent, class:(hermes)"
+        "float, class:(hermes)"
+        "size 1200 750, class:(hermes)"
+        "center, class:(hermes)"
       ];
     };
   };
