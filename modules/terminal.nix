@@ -58,6 +58,14 @@
 
     # TUI git client
     lazygit
+
+    khal
+
+    # notify-send for pomo desktop notifications
+    libnotify
+
+    # Pomodoro timer
+    (pkgs.writers.writePython3Bin "pomo" { flakeIgnore = [ "E501" ]; } (builtins.readFile /home/mhg/projects/pomo/pomo.py))
   ];
 
   # zoxide — smarter cd with frecency ranking
@@ -247,8 +255,8 @@
       nrsu = "sudo nixos-rebuild switch --upgrade";
       nrb = "sudo nixos-rebuild boot";
       # sudoedit: safely edits root files in $EDITOR without running editor as root
-      ne = "sudoedit /etc/nixos/configuration.nix";
-      nhm = "sudoedit /etc/nixos/home.nix";
+      ne = "hx /etc/nixos/configuration.nix";
+      nhm = "hx /etc/nixos/home.nix";
     };
 
     functions = {
@@ -265,25 +273,6 @@
         body = ''ssh -t hermes "tmux new-session -A -s hermes"'';
       };
 
-      # Quick Capture: append a timestamped note to ~/capture.md on the VPS.
-      # Usage:  capture "thought"   OR   echo "thought" | capture
-      # Requires passwordless SSH access to the 'hermes' host.
-      capture = {
-        description = "Append a timestamped note to ~/capture.md on Hermes VPS";
-        body = ''
-          set -l text (string join " " $argv)
-          if test -z "$text"
-            set text (cat)
-          end
-          if test -z "$text"
-            echo "Usage: capture <thought>  or  echo <thought> | capture" >&2
-            return 1
-          end
-          set -l ts (date "+%Y-%m-%d %H:%M")
-          printf -- "- %s %s\n" $ts $text | ssh hermes "cat >> ~/capture.md"
-          and echo "Captured."
-        '';
-      };
     };
   };
 
@@ -308,6 +297,7 @@
         "$git_branch"
         "$git_status"
         "$cmd_duration"
+        "\${custom.pomo}"
         "$line_break"
         "$character"
       ];
@@ -339,6 +329,16 @@
         min_time = 2000;
         format = "took [$duration]($style) ";
         style = "bold yellow";
+      };
+
+      custom = {
+        pomo = {
+          command = ''d=$(cut -d' ' -f1 ~/.local/share/pomo/state); r=$((d - $(date +%s))); [ $r -gt 0 ] && printf '%02d:%02d' $((r/60)) $((r%60))'';
+          when = "test -f $HOME/.local/share/pomo/state";
+          format = "🍅 [$output]($style) ";
+          style = "bold red";
+          shell = ["bash" "--noprofile" "--norc"];
+        };
       };
     };
   };

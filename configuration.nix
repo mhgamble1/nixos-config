@@ -1,5 +1,9 @@
 { config, pkgs, ... }:
 
+let
+  secrets = import /etc/nixos/secrets.nix;
+in
+
 {
   imports = [
     ./hardware-configuration.nix
@@ -10,6 +14,9 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true;
+
+  # Hibernation — point kernel to swap partition for resume image
+  boot.resumeDevice = "/dev/disk/by-uuid/6430a86b-0e47-4c9b-ad47-619efb5a39e8";
 
   networking.hostName = "nixos";
 
@@ -125,8 +132,6 @@
     '';
   };
 
-
-  # Mullvad VPN
   # Ollama — local LLM inference with CUDA acceleration
   services.ollama = {
     enable = true;
@@ -134,6 +139,18 @@
   };
 
   services.mullvad-vpn.enable = true;
+
+  services.tailscale.enable = true;
+  networking.firewall.trustedInterfaces = [ "tailscale0" ];
+  networking.firewall.allowedUDPPorts = [ config.services.tailscale.port ];
+
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
 
   # Allow LAN traffic to bypass the VPN tunnel (required for NAS at 192.168.1.100)
   systemd.services.mullvad-lan-allow = {
@@ -164,6 +181,7 @@
     description = "mhg";
     shell = pkgs.fish;
     extraGroups = [ "networkmanager" "wheel" ];
+    openssh.authorizedKeys.keys = secrets.authorizedKeys.mark;
   };
 
   # Fonts
@@ -190,6 +208,7 @@
     git
     cifs-utils
     vulkan-tools
+    feh
   ];
 
   system.stateVersion = "25.11";

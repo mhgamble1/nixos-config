@@ -10,6 +10,7 @@ in
     ./modules/terminal.nix
     ./modules/dev.nix
     ./modules/theming.nix
+    ./modules/cockpit.nix
   ];
 
   home.username = "mhg";
@@ -530,6 +531,13 @@ in
 
     calibre
 
+    w3m
+    browsh
+
+    newsboat
+
+    tealdeer
+
     # Wayland utilities
     wlr-randr
 
@@ -556,5 +564,7 @@ in
 
     # Downloads
     aria2
+
+    circumflex
   ];
 }
