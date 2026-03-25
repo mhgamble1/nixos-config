@@ -209,6 +209,9 @@
       # Suppress greeting
       set fish_greeting ""
 
+      # Bun global bin
+      fish_add_path /home/mhg/.cache/.bun/bin
+
       # Use vim keybindings in fish
       fish_vi_key_bindings
 
@@ -337,7 +340,7 @@
           when = "test -f $HOME/.local/share/pomo/state";
           format = "🍅 [$output]($style) ";
           style = "bold red";
-          shell = ["bash" "--noprofile" "--norc"];
+          shell = [ "bash" "--noprofile" "--norc" ];
         };
       };
     };
