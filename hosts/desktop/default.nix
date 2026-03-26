@@ -23,7 +23,7 @@
 
   # ── NAS — Samba automount ──────────────────────────────────────────────
   fileSystems."/mnt/nas" = {
-    device = "//192.168.1.100/nas";
+    device = "//${secrets.nas.ip}/nas";
     fsType = "cifs";
     options = [
       "credentials=/etc/nixos/smb-credentials"
@@ -38,7 +38,7 @@
     ];
   };
 
-  # Allow LAN traffic to bypass the VPN tunnel (required for NAS at 192.168.1.100)
+  # Allow LAN traffic to bypass the VPN tunnel (required for NAS)
   systemd.services.mullvad-lan-allow = {
     description = "Allow LAN access through Mullvad VPN";
     after = [ "mullvad-daemon.service" ];
