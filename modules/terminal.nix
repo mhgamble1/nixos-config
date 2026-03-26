@@ -11,9 +11,6 @@
 
     # cat → bat  (configured as program below)
 
-    # git diff pager → delta  (wired into git via programs.git.delta below)
-    delta
-
     # du → dust
     dust
 
@@ -61,11 +58,8 @@
 
     khal
 
-    # notify-send for pomo desktop notifications
-    libnotify
-
     # Pomodoro timer
-    (pkgs.writers.writePython3Bin "pomo" { flakeIgnore = [ "E501" ]; } (builtins.readFile /home/mhg/projects/pomo/pomo.py))
+    (pkgs.writers.writePython3Bin "pomo" { flakeIgnore = [ "E501" ]; } (builtins.readFile ../scripts/pomo.py))
   ];
 
   # zoxide — smarter cd with frecency ranking
@@ -254,12 +248,12 @@
       claude = "nix run github:sadjow/claude-code-nix --";
 
       # NixOS
-      nrs = "sudo nixos-rebuild switch";
-      nrsu = "sudo nixos-rebuild switch --upgrade";
-      nrb = "sudo nixos-rebuild boot";
-      # sudoedit: safely edits root files in $EDITOR without running editor as root
-      ne = "hx /etc/nixos/configuration.nix";
-      nhm = "hx /etc/nixos/home.nix";
+      nrs = "sudo nixos-rebuild switch --flake /etc/nixos --impure";
+      nrsu = "sudo nix flake update /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos --impure";
+      nrb = "sudo nixos-rebuild boot --flake /etc/nixos --impure";
+      ne = "hx /etc/nixos/hosts/desktop/default.nix";
+      nfl = "hx /etc/nixos/flake.nix";
+      nhm = "hx /etc/nixos/home/mhg/default.nix";
     };
 
     functions = {

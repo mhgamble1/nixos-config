@@ -1,6 +1,6 @@
 # nixos-config
 
-NixOS system configuration for a single Wayland/Hyprland workstation. Declarative, git-tracked, home-manager integrated.
+NixOS system configuration for a Wayland/Hyprland workstation. Flake-based, git-tracked, Home Manager integrated as a NixOS module.
 
 ---
 
@@ -12,19 +12,35 @@ NixOS system configuration for a single Wayland/Hyprland workstation. Declarativ
 
 ---
 
-## Module structure
+## Structure
 
 ```
 /etc/nixos/
-├── configuration.nix           # System: boot, hardware, networking, services, users
-├── hardware-configuration.nix  # Auto-generated — do not hand-edit
-├── home.nix                    # Home Manager root: git, SSH, yazi, per-user packages
+├── flake.nix                          # Entry point — nixpkgs pin, hosts, HM module
+├── flake.lock                         # Auto-generated — pins nixos-unstable
+├── secrets.nix                        # Passwords/credentials — gitignored, loaded via --impure
+├── smb-credentials                    # NAS mount credentials — not committed
+├── hardware-configuration.nix         # Auto-generated — do not hand-edit
+├── hosts/
+│   ├── desktop/default.nix            # Desktop: boot, NAS, ollama-cuda, imports shared modules
+│   └── laptop/default.nix             # Laptop: scaffold (future Dell XPS)
 ├── modules/
-│   ├── hyprland.nix            # Hyprland WM, waybar, fuzzel, mako, keybinds, window rules
-│   ├── terminal.nix            # Ghostty, tmux, fish, starship, bat, fzf, zoxide, modern utils
-│   ├── dev.nix                 # Helix editor, Go, Python/uv, Nix LSP, SQLite
-│   └── theming.nix             # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
-└── smb-credentials             # NAS mount credentials (not committed)
+│   ├── nixos/                         # System-level NixOS modules
+│   │   ├── base.nix                   # Locale, timezone, nix settings, nix-ld, allowUnfree
+│   │   ├── networking.nix             # NetworkManager, tailscale, mullvad, openssh
+│   │   ├── desktop.nix                # xserver, SDDM, Hyprland, pipewire, printing, Firefox
+│   │   ├── services.nix               # Flatpak, bluetooth
+│   │   ├── users.nix                  # users.users.mhg, fonts
+│   │   └── hardware/nvidia.nix        # NVIDIA drivers, modesetting, graphics
+│   ├── hyprland.nix                   # Hyprland WM, Waybar, fuzzel, mako, keybinds
+│   ├── terminal.nix                   # Ghostty, tmux, fish, starship, bat, fzf, zoxide
+│   ├── dev.nix                        # Helix, Go, Python/uv, Nix LSP, SQLite
+│   └── theming.nix                    # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
+├── home/mhg/
+│   ├── default.nix                    # Home Manager root: git, SSH, yazi, per-user packages
+│   └── cheatsheet.md                  # Quick reference (rendered to ~/cheatsheet.md)
+└── scripts/
+    └── pomo.py                        # Pomodoro timer
 ```
 
 ---
@@ -54,20 +70,23 @@ NixOS system configuration for a single Wayland/Hyprland workstation. Declarativ
 ### Apply config changes
 
 ```bash
-nrs     # sudo nixos-rebuild switch
-nrsu    # + pull new package versions from upstream
+nrs     # sudo nixos-rebuild switch --flake /etc/nixos --impure
+nrsu    # + update flake inputs (pull new package versions)
 
 # Rollback if something breaks:
 sudo nixos-rebuild switch --rollback
 ```
 
+> `--impure` is required because `secrets.nix` is gitignored.
+
 ### Edit configs quickly
 
 ```bash
-ne      # sudoedit /etc/nixos/configuration.nix
-nhm     # sudoedit /etc/nixos/home.nix
-# For modules, open directly:
-hx /etc/nixos/modules/hyprland.nix
+# Open key files directly:
+hx /etc/nixos/hosts/desktop/default.nix   # boot, NAS, ollama
+hx /etc/nixos/home/mhg/default.nix        # home manager root
+hx /etc/nixos/modules/hyprland.nix        # keybinds, window rules
+hx /etc/nixos/modules/terminal.nix        # shell, aliases
 ```
 
 ### Commit and push changes
@@ -82,15 +101,14 @@ gp           # git push (via SSH)
 
 ---
 
-## Remote sync
+## Remote sync / bootstrap
 
-This repo is primarily **pushed from one machine**. The remote is a backup and a bootstrap source.
+This repo is primarily **pushed from one machine**. The remote is a backup and bootstrap source.
 
 | Scenario | What to do |
 |---|---|
-| **New machine / fresh NixOS install** | `git clone git@github.com:mhgamble1/nixos-config.git /etc/nixos && nrs` |
+| **New machine / fresh NixOS install** | Clone repo, copy `hardware-configuration.nix`, run `nixos-rebuild switch --flake /etc/nixos --impure` |
 | **Reinstall on the same machine** | Same as above — the remote is your restore point |
-| **Recovering from a broken store** | Clone fresh, run `nixos-rebuild switch` |
 
 ### Bootstrap on a new machine
 
@@ -103,14 +121,15 @@ nixos-generate-config --root /mnt
 cd /mnt/etc && rm -rf nixos
 git clone git@github.com:mhgamble1/nixos-config.git nixos
 
-# 4. Replace hardware-configuration.nix with the generated one
-cp /mnt/etc/nixos/hardware-configuration.nix.bak nixos/hardware-configuration.nix
+# 4. Copy the generated hardware-configuration.nix into place
+cp /mnt/etc/nixos.bak/hardware-configuration.nix nixos/
 
-# 5. Rebuild
-nixos-install  # or nixos-rebuild switch if already booted
+# 5. Add a new host entry in flake.nix and hosts/<hostname>/default.nix
+# 6. Rebuild
+nixos-install --flake /mnt/etc/nixos#<hostname>
 ```
 
-> `hardware-configuration.nix` is machine-specific (disk UUIDs, detected hardware). Keep the auto-generated one per machine; everything else is portable.
+> `hardware-configuration.nix` is machine-specific (disk UUIDs, detected hardware). Every host keeps its own generated copy; everything else is shared.
 
 ---
 
@@ -156,13 +175,12 @@ sudo nix-store --optimise
 
 - [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key
 - [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
-- [ ] **Hostname** — rename from `nixos` to something meaningful in `configuration.nix`
+- [ ] **Hostname** — rename from `nixos` to something meaningful in `flake.nix`
+- [ ] **Laptop host** — flesh out `hosts/laptop/default.nix` for Dell XPS
 
 ### Medium-term
 
-- [ ] **Flake-ify the NixOS config** — convert to `flake.nix` with pinned nixpkgs for reproducible builds
-- [ ] **Multi-host support** — once flake-based, support laptop vs desktop from the same repo
-- [ ] **Secrets management** — `agenix` or `sops-nix` for NAS credentials and API keys
+- [ ] **Secrets management** — `agenix` or `sops-nix` for NAS credentials and API keys; would eliminate the `--impure` flag requirement
 
 ### Long-term
 

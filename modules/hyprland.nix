@@ -162,7 +162,6 @@ in
         "$mod, RETURN, exec, ghostty"
         "$mod, D, exec, fuzzel"
         "$mod, E, exec, ghostty --class=yazi -e yazi"
-        "$mod, slash, exec, ghostty --class=cheatsheet -e bat --paging=always ~/cheatsheet.md"
         "$mod, M, exec, ghostty --class=spotify-player -e spotify_player"
 
         # Window management
@@ -246,31 +245,35 @@ in
         "$mod, mouse:273, resizewindow"
       ];
 
-      # ── Window rules ──────────────────────────────────────────────────
-      windowrulev2 = [
-        # Cheatsheet — floating, centered, fixed size
-        "float, class:(cheatsheet)"
-        "size 920 700, class:(cheatsheet)"
-        "center, class:(cheatsheet)"
-        "stayfocused, class:(cheatsheet)"
-
-        # Yazi file manager — floating when opened via SUPER+E
-        "float, class:(yazi)"
-        "size 900 600, class:(yazi)"
-        "center, class:(yazi)"
-
-        # Spotify TUI — floating when opened via SUPER+M
-        "float, class:(spotify-player)"
-        "size 1100 700, class:(spotify-player)"
-        "center, class:(spotify-player)"
-
-        # Hermes scratchpad — auto-assign to special:hermes workspace
-        "workspace special:hermes silent, class:(hermes)"
-        "float, class:(hermes)"
-        "size 1200 750, class:(hermes)"
-        "center, class:(hermes)"
-      ];
     };
+
+    # ── Window rules (Hyprland 0.46+ block syntax) ────────────────────
+    extraConfig = ''
+      windowrule {
+        name = yazi-float
+        match:class = yazi
+        float = yes
+        size = 900 600
+        center = yes
+      }
+
+      windowrule {
+        name = spotify-float
+        match:class = spotify-player
+        float = yes
+        size = 1100 700
+        center = yes
+      }
+
+      windowrule {
+        name = hermes-scratchpad
+        match:class = hermes
+        workspace = special:hermes silent
+        float = yes
+        size = 1200 750
+        center = yes
+      }
+    '';
   };
 
   # ── Desktop entries (override system defaults) ────────────────────────

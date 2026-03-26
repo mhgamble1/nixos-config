@@ -14,6 +14,7 @@
     };
     gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
     gtk4.extraConfig.gtk-application-prefer-dark-theme = true;
+    gtk4.theme = config.gtk.theme;
   };
 
   # GTK4 apps and XDG portals read this for the system color-scheme preference
