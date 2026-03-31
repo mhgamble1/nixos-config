@@ -286,9 +286,9 @@
             -o ServerAliveInterval=30 \
             -o ServerAliveCountMax=6 \
             -o ControlMaster=auto \
-            -o "ControlPath=$HOME/.ssh/cm-%r@%h:%p" \
+            -o ControlPath=%d/.ssh/cm-%r@%h:%p \
             -o ControlPersist=10m \
-            $argv[1] "tmux new-session -A -s main"
+            "$argv[1]" "tmux new-session -A -s main"
         '';
       };
 
