@@ -272,6 +272,26 @@
         body = ''ssh -t hermes "tmux new-session -A -s hermes"'';
       };
 
+      # Connect to an exe.dev VM directly, with keepalives, ControlMaster, and
+      # tmux session persistence. Usage: exe <hostname-or-ip>
+      # Reconnecting after a drop reattaches the same session — state is preserved.
+      exe = {
+        description = "Connect to an exe.dev VM with tmux session persistence";
+        body = ''
+          if test (count $argv) -ne 1
+            echo "Usage: exe <hostname-or-ip>"
+            return 1
+          end
+          ssh -t \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=6 \
+            -o ControlMaster=auto \
+            -o "ControlPath=$HOME/.ssh/cm-%r@%h:%p" \
+            -o ControlPersist=10m \
+            $argv[1] "tmux new-session -A -s main"
+        '';
+      };
+
     };
   };
 
