@@ -288,7 +288,7 @@
             -o ControlMaster=auto \
             -o ControlPath=%d/.ssh/cm-%r@%h:%p \
             -o ControlPersist=10m \
-            "$argv[1]" "tmux new-session -A -s main"
+            "$argv[1]" "tmux new-session -d -s main 2>/dev/null; tmux set -g status off; tmux attach-session -t main"
         '';
       };
 
