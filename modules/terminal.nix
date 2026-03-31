@@ -279,8 +279,14 @@
         description = "Connect to an exe.dev VM with tmux session persistence";
         body = ''
           if test (count $argv) -ne 1
-            echo "Usage: exe <hostname-or-ip>"
+            echo "Usage: exe <name>"
             return 1
+          end
+          # Auto-append .exe.xyz if no dot in arg (i.e. short name like "spin-sun")
+          if string match -qr '\.' $argv[1]
+            set host $argv[1]
+          else
+            set host "$argv[1].exe.xyz"
           end
           ssh -t \
             -o ServerAliveInterval=30 \
@@ -288,7 +294,7 @@
             -o ControlMaster=auto \
             -o ControlPath=%d/.ssh/cm-%r@%h:%p \
             -o ControlPersist=10m \
-            "$argv[1]" "tmux new-session -d -s main 2>/dev/null; tmux set -g status off; tmux attach-session -t main"
+            "$host" "tmux new-session -d -s main 2>/dev/null; tmux set -t main status off; tmux attach-session -t main"
         '';
       };
 
