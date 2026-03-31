@@ -31,6 +31,18 @@
       serverAliveInterval = 60;
       serverAliveCountMax = 10;
     };
+    # exe.dev VMs — direct SSH with keepalives and connection multiplexing
+    matchBlocks."*.exe.xyz" = {
+      user = "exedev";
+      identityFile = "~/.ssh/id_ed25519";
+      serverAliveInterval = 30;
+      serverAliveCountMax = 6;
+      extraOptions = {
+        ControlMaster = "auto";
+        ControlPath = "~/.ssh/cm-%r@%h:%p";
+        ControlPersist = "10m";
+      };
+    };
   };
 
   # ── Git ───────────────────────────────────────────────────────────────
@@ -126,5 +138,7 @@
     aria2
 
     circumflex
+
+    cheese
   ];
 }
