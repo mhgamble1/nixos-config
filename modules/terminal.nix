@@ -176,7 +176,9 @@
       # Quick pane cycling
       bind -n M-o select-pane -t :.+
 
-      # Status bar (minimal, Tokyo Night colors)
+      # Status bar (minimal, Tokyo Night colors) — hidden by default
+      # To show temporarily: tmux set status on
+      set -g status off
       set -g status-style bg='#1a1b26',fg='#c0caf5'
       set -g status-left-length 30
       set -g status-left '#[fg=#7aa2f7,bold] #S '
