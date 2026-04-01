@@ -294,7 +294,7 @@
             -o ControlMaster=auto \
             -o ControlPath=%d/.ssh/cm-%r@%h:%p \
             -o ControlPersist=10m \
-            "$host" "tmux new-session -d -s main 2>/dev/null; tmux set -t main status off; tmux attach-session -t main"
+            "$host" "[ -f ~/.tmux.conf ] || { echo 'set -g default-terminal xterm-256color'; echo 'set -g status off'; } > ~/.tmux.conf; tmux new-session -d -s main 2>/dev/null; tmux source-file ~/.tmux.conf 2>/dev/null; tmux set -t main status off; tmux attach-session -t main"
         '';
       };
 
