@@ -7,9 +7,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    claude-code-nix.url = "github:sadjow/claude-code-nix";
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, home-manager, codex-cli-nix, claude-code-nix, ... }:
   let
     # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
     # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -20,7 +22,7 @@
     hmConfig = {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.extraSpecialArgs = { inherit secrets; };
+      home-manager.extraSpecialArgs = { inherit secrets codex-cli-nix claude-code-nix; };
       home-manager.users.mhg = import ./home/mhg;
     };
   in {

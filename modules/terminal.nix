@@ -246,9 +246,6 @@
       ps = "procs"; # readable process list
       top = "btm"; # bottom system monitor
 
-      # Claude Code (up-to-date via flake, alias avoids typing the full nix run command)
-      claude = "nix run github:sadjow/claude-code-nix --";
-
       # NixOS
       nrs = "sudo nixos-rebuild switch --flake /etc/nixos --impure";
       nrsu = "sudo nix flake update /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos --impure";

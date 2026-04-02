@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, codex-cli-nix, claude-code-nix, ... }:
 
 {
   # ── Helix ─────────────────────────────────────────────────────────────
@@ -137,6 +137,12 @@
     sqlite
     litecli
     opencode
+    codex-cli-nix.packages.${pkgs.system}.default
+    claude-code-nix.packages.${pkgs.system}.default
+
+    llama-cpp
+
+    bubblewrap
 
     gh
   ];
