@@ -38,7 +38,20 @@
     ];
   };
 
-  # Allow LAN traffic to bypass the VPN tunnel (required for NAS)
+  # Disable Mullvad auto-connect — use manually to avoid conflicting with Tailscale
+  systemd.services.mullvad-autoconnect-disable = {
+    description = "Disable Mullvad auto-connect on boot";
+    after = [ "mullvad-daemon.service" ];
+    wants = [ "mullvad-daemon.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad auto-connect set off";
+      RemainAfterExit = true;
+    };
+  };
+
+  # Allow LAN traffic to bypass the VPN tunnel (required for NAS when VPN is active)
   systemd.services.mullvad-lan-allow = {
     description = "Allow LAN access through Mullvad VPN";
     after = [ "mullvad-daemon.service" ];
