@@ -58,6 +58,8 @@
 
     khal
 
+    jujutsu
+
     # Pomodoro timer
     (pkgs.writers.writePython3Bin "pomo" { flakeIgnore = [ "E501" ]; } (builtins.readFile ../scripts/pomo.py))
   ];
@@ -253,6 +255,7 @@
       ne = "hx /etc/nixos/hosts/desktop/default.nix";
       nfl = "hx /etc/nixos/flake.nix";
       nhm = "hx /etc/nixos/home/mhg/default.nix";
+
     };
 
     functions = {

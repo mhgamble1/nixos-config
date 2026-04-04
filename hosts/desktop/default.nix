@@ -68,6 +68,9 @@
   services.ollama = {
     enable = true;
     package = pkgs.ollama-cuda;
+    environmentVariables = {
+      OLLAMA_KEEP_ALIVE = "-1"; # keep model in VRAM indefinitely
+    };
   };
 
   system.stateVersion = "25.11";
