@@ -62,15 +62,21 @@ This file is the source of truth. Update it whenever binds change.
 ### Workspaces
 | Binding | Action |
 |---------|--------|
-| `SUPER+1` | Switch to `code` |
-| `SUPER+2` | Switch to `web` |
-| `SUPER+3` | Switch to `comms` |
-| `SUPER+4` | Switch to `music` |
-| `SUPER+5` | Switch to `scratch` |
+| `SUPER+1` | Switch to `1:code` |
+| `SUPER+2` | Switch to `2:web` |
+| `SUPER+3` | Switch to `3:scratch` |
+| `SUPER+4` | Switch to `4:music` |
+| `SUPER+5` | Switch to `5:comms` |
 | `SUPER+6…9` | Switch to workspace 6–9 (unnamed) |
-| `SUPER+SHIFT+1…9` | Move window to workspace 1–9 |
+| `SUPER+SHIFT+1` | Move window to `1:code` |
+| `SUPER+SHIFT+2` | Move window to `2:web` |
+| `SUPER+SHIFT+3` | Move window to `3:scratch` |
+| `SUPER+SHIFT+4` | Move window to `4:music` |
+| `SUPER+SHIFT+5` | Move window to `5:comms` |
+| `SUPER+SHIFT+6…9` | Move window to workspace 6–9 |
 | `SUPER+Tab` | Toggle most recent workspace |
 | `SUPER+scroll` | Cycle workspaces |
+| `SUPER+SHIFT+B` | Re-run the standard app/workspace bootstrap |
 
 ### Scratchpad (Hermes)
 | Binding | Action |
@@ -372,7 +378,7 @@ Ghostty is used as a plain terminal emulator. Splits are disabled — use Hyprla
 ### 2026-02 — Layout unification & HRM commitment
 - **Removed** tmux auto-attach from Fish login. tmux is now SSH/remote only.
 - **Removed** Ghostty split keybinds. Ghostty is a plain terminal; Hyprland owns layout.
-- **Added** named workspaces: 1=code, 2=web, 3=comms, 4=music, 5=scratch.
+- **Added** named workspaces: 1=code, 2=web, 3=scratch, 4=music, 5=comms.
 - **Added** `SUPER+Tab` to cycle most recent workspace.
 - **Added** media keys: XF86AudioPlay/Next/Prev/Mute, volume ±5% (repeatable), brightness ±5% (repeatable).
 - **HRM trial:** Thumb-SUPER disabled in Tailorkey. Committing to bilateral homerow mods for evaluation.

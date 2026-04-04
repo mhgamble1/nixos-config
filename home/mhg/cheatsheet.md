@@ -16,8 +16,15 @@ You just logged in. This is everything you need on day one.
 | `SUPER+/`            | This cheatsheet                 |
 | `SUPER+SHIFT+E`      | Exit / logout                   |
 | `SUPER+SHIFT+L`      | Lock screen                     |
-| `SUPER+1` … `SUPER+9`| Switch workspace                |
-| `SUPER+SHIFT+1…9`    | Send window to workspace        |
+| `SUPER+1`            | Switch to `1:code`              |
+| `SUPER+2`            | Switch to `2:web`               |
+| `SUPER+3`            | Switch to `3:scratch`           |
+| `SUPER+4`            | Switch to `4:music`             |
+| `SUPER+5`            | Switch to `5:comms`             |
+| `SUPER+6` … `SUPER+9`| Switch workspace 6–9            |
+| `SUPER+SHIFT+1…5`    | Send window to named workspace  |
+| `SUPER+SHIFT+6…9`    | Send window to workspace 6–9    |
+| `SUPER+SHIFT+B`      | Re-run session bootstrap        |
 
 That's it. When you're comfortable here, move to Phase 2.
 

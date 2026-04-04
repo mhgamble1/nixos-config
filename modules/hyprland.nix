@@ -1,6 +1,83 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Startup profile: launch these apps onto fixed workspaces so the session
+  # comes up in a predictable layout after login.
+  startupApps = [
+    {
+      name = "code-editor";
+      workspace = "name:1:code";
+      classRegex = "^(dev.zed.Zed|Zed|zed)$";
+      command = "zeditor";
+    }
+    {
+      name = "code-term";
+      workspace = "name:1:code";
+      classRegex = "^(code-term)$";
+      command = "${pkgs.ghostty}/bin/ghostty --class=code-term";
+    }
+    {
+      name = "web-browser";
+      workspace = "name:2:web";
+      classRegex = "^(firefox)$";
+      command = "${pkgs.firefox}/bin/firefox";
+    }
+    {
+      name = "scratch-term";
+      workspace = "name:3:scratch";
+      classRegex = "^(scratch-term)$";
+      command = "${pkgs.ghostty}/bin/ghostty --class=scratch-term";
+    }
+    {
+      name = "music-spotify";
+      workspace = "name:4:music";
+      classRegex = "^(Spotify)$";
+      command = "${pkgs.spotify}/bin/spotify";
+    }
+    {
+      name = "comms-discord";
+      workspace = "name:5:comms";
+      classRegex = "^(discord|Discord)$";
+      command = "${pkgs.discord}/bin/discord";
+    }
+  ];
+
+  hypr-session-bootstrap = pkgs.writeShellScriptBin "hypr-session-bootstrap" ''
+    set -eu
+
+    has_client() {
+      match_re="$1"
+      ${pkgs.hyprland}/bin/hyprctl clients -j \
+        | ${pkgs.jq}/bin/jq -e --arg match_re "$match_re" \
+          'any(.[]; ((.class // "") | test($match_re)) or ((.initialClass // "") | test($match_re)))' \
+        > /dev/null 2>&1
+    }
+
+    launch_if_missing() {
+      match_re="$1"
+      workspace="$2"
+      command="$3"
+
+      if has_client "$match_re"; then
+        return 0
+      fi
+
+      ${pkgs.hyprland}/bin/hyprctl dispatch exec "[workspace ''${workspace} silent] ''${command}"
+      sleep 0.4
+    }
+
+    ${lib.concatMapStringsSep "\n" (app:
+      "launch_if_missing "
+      + lib.escapeShellArg app.classRegex
+      + " "
+      + lib.escapeShellArg app.workspace
+      + " "
+      + lib.escapeShellArg app.command
+    ) startupApps}
+
+    ${pkgs.hyprland}/bin/hyprctl dispatch workspace name:1:code
+  '';
+
   # Toggle the Hermes scratchpad: spawns ghostty→hermes SSH session on first press,
   # then shows/hides the special:hermes workspace on subsequent presses.
   hermes-toggle = pkgs.writeShellScriptBin "hermes-toggle" ''
@@ -38,6 +115,7 @@ in
     networkmanagerapplet # Network tray applet
     screenrec-toggle # Toggle script for wl-screenrec
     hermes-toggle # Toggle Hermes scratchpad (special:hermes workspace)
+    hypr-session-bootstrap # Launch the standard session layout onto fixed workspaces
     playerctl # Media key control (play/pause/next/prev)
     brightnessctl # Backlight brightness control
   ];
@@ -68,6 +146,7 @@ in
         "waybar"
         "mako"
         "nm-applet --indicator"
+        "hypr-session-bootstrap"
         # hypridle is started automatically as a systemd user service (see services.hypridle below)
       ];
 
@@ -139,11 +218,11 @@ in
 
       # ── Named workspaces ──────────────────────────────────────────────
       workspace = [
-        "1, name:code"
-        "2, name:web"
-        "3, name:comms"
-        "4, name:music"
-        "5, name:scratch"
+        "1, name:1:code"
+        "2, name:2:web"
+        "3, name:3:scratch"
+        "4, name:4:music"
+        "5, name:5:comms"
       ];
 
       # ── Keybinds ──────────────────────────────────────────────────────
@@ -183,23 +262,23 @@ in
         "$mod SHIFT, k, movewindow, u"
         "$mod SHIFT, j, movewindow, d"
 
-        # Workspaces 1–9
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
+        # Named workspaces 1–5, numeric overflow 6–9
+        "$mod, 1, workspace, name:1:code"
+        "$mod, 2, workspace, name:2:web"
+        "$mod, 3, workspace, name:3:scratch"
+        "$mod, 4, workspace, name:4:music"
+        "$mod, 5, workspace, name:5:comms"
         "$mod, 6, workspace, 6"
         "$mod, 7, workspace, 7"
         "$mod, 8, workspace, 8"
         "$mod, 9, workspace, 9"
 
-        # Move window to workspace 1–9
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
+        # Move window to named workspaces 1–5, numeric overflow 6–9
+        "$mod SHIFT, 1, movetoworkspace, name:1:code"
+        "$mod SHIFT, 2, movetoworkspace, name:2:web"
+        "$mod SHIFT, 3, movetoworkspace, name:3:scratch"
+        "$mod SHIFT, 4, movetoworkspace, name:4:music"
+        "$mod SHIFT, 5, movetoworkspace, name:5:comms"
         "$mod SHIFT, 6, movetoworkspace, 6"
         "$mod SHIFT, 7, movetoworkspace, 7"
         "$mod SHIFT, 8, movetoworkspace, 8"
@@ -221,6 +300,7 @@ in
         "$mod SHIFT, L, exec, swaylock -f"
 
         # Reload / exit
+        "$mod SHIFT, B, exec, hypr-session-bootstrap"
         "$mod SHIFT, R, exec, hyprctl reload"
         "$mod SHIFT, E, exit,"
 
