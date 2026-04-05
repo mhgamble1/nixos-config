@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/master";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -11,7 +12,7 @@
     claude-code-nix.url = "github:sadjow/claude-code-nix";
   };
 
-  outputs = { nixpkgs, home-manager, codex-cli-nix, claude-code-nix, ... }:
+  outputs = { nixpkgs, nixpkgs-unstable, home-manager, codex-cli-nix, claude-code-nix, ... }:
   let
     # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
     # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -32,7 +33,13 @@
       # nixos-rebuild switch --flake /etc/nixos#nixos
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit secrets; };
+        specialArgs = {
+          inherit secrets;
+          pkgs-unstable = import nixpkgs-unstable {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
+        };
         modules = [
           ./hosts/desktop
           home-manager.nixosModules.home-manager

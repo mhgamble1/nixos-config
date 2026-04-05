@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, pkgs-unstable, secrets, ... }:
 
 {
   imports = [
@@ -67,7 +67,7 @@
   # ── Ollama — local LLM inference with CUDA ─────────────────────────────
   services.ollama = {
     enable = true;
-    package = pkgs.ollama-cuda;
+    package = pkgs-unstable.ollama-cuda;
     environmentVariables = {
       OLLAMA_KEEP_ALIVE = "-1"; # keep model in VRAM indefinitely
     };

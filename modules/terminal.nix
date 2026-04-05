@@ -250,7 +250,7 @@
 
       # NixOS
       nrs = "sudo nixos-rebuild switch --flake /etc/nixos --impure";
-      nrsu = "sudo nix flake update /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos --impure";
+      nrsu = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos --impure";
       nrb = "sudo nixos-rebuild boot --flake /etc/nixos --impure";
       ne = "hx /etc/nixos/hosts/desktop/default.nix";
       nfl = "hx /etc/nixos/flake.nix";
@@ -263,13 +263,6 @@
       cht = {
         description = "View the system cheatsheet";
         body = "bat --paging=always ~/cheatsheet.md";
-      };
-
-      # SSH into Hermes VPS and attach-or-create the persistent tmux session.
-      # Requires the 'hermes' SSH host block configured in programs.ssh (home.nix).
-      hermes = {
-        description = "Attach to Hermes AI agent on VPS (tmux session: hermes)";
-        body = ''ssh -t hermes "tmux new-session -A -s hermes"'';
       };
 
       # Connect to an exe.dev VM directly, with keepalives, ControlMaster, and
@@ -354,16 +347,6 @@
         min_time = 2000;
         format = "took [$duration]($style) ";
         style = "bold yellow";
-      };
-
-      custom = {
-        pomo = {
-          command = ''d=$(cut -d' ' -f1 ~/.local/share/pomo/state); r=$((d - $(date +%s))); [ $r -gt 0 ] && printf '%02d:%02d' $((r/60)) $((r%60))'';
-          when = "test -f $HOME/.local/share/pomo/state";
-          format = "🍅 [$output]($style) ";
-          style = "bold red";
-          shell = [ "bash" "--noprofile" "--norc" ];
-        };
       };
     };
   };
