@@ -6,7 +6,6 @@
     ../../modules/terminal.nix
     ../../modules/dev.nix
     ../../modules/theming.nix
-    ../../modules/cockpit.nix
   ];
 
   home.username = "mhg";
@@ -121,6 +120,7 @@
 
     # Note-taking
     zk
+    obsidian
 
     # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
     xdg-terminal-exec
