@@ -1,4 +1,4 @@
-{ config, pkgs, lib, codex-cli-nix, claude-code-nix, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   # Zed has recurring Wayland/NVIDIA hangs on this machine. Force XWayland by
@@ -150,13 +150,10 @@ in
 
     sqlite
     litecli
-    opencode
     (llm.withPlugins {
       llm-ollama = true;
       llm-jq = true;
     })
-    codex-cli-nix.packages.${pkgs.system}.default
-    claude-code-nix.packages.${pkgs.system}.default
 
     llama-cpp
 

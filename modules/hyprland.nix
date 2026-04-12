@@ -5,12 +5,6 @@ let
   # comes up in a predictable layout after login.
   startupApps = [
     {
-      name = "code-editor";
-      workspace = "name:1:code";
-      classRegex = "^(dev.zed.Zed|Zed|zed)$";
-      command = "zeditor";
-    }
-    {
       name = "code-term";
       workspace = "name:1:code";
       classRegex = "^(code-term)$";
@@ -23,22 +17,10 @@ let
       command = "${pkgs.firefox}/bin/firefox";
     }
     {
-      name = "scratch-term";
-      workspace = "name:3:scratch";
-      classRegex = "^(scratch-term)$";
-      command = "${pkgs.ghostty}/bin/ghostty --class=scratch-term";
-    }
-    {
       name = "music-spotify";
       workspace = "name:4:music";
       classRegex = "^(Spotify)$";
       command = "${pkgs.spotify}/bin/spotify";
-    }
-    {
-      name = "comms-discord";
-      workspace = "name:5:comms";
-      classRegex = "^(discord|Discord)$";
-      command = "${pkgs.discord}/bin/discord";
     }
   ];
 

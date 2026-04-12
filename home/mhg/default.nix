@@ -5,6 +5,7 @@
     ../../modules/hyprland.nix
     ../../modules/terminal.nix
     ../../modules/dev.nix
+    ../../modules/agents.nix
     ../../modules/theming.nix
   ];
 
