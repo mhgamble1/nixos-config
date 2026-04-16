@@ -137,9 +137,13 @@
 
     # Downloads
     aria2
+    yt-dlp
 
     circumflex
 
     cheese
+
+    # Media processing
+    ffmpeg
   ];
 }

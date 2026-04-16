@@ -133,7 +133,6 @@ in
   home.packages = with pkgs; [
     # Go
     gopls
-    gotools
     go-tools
 
     # Python
@@ -147,6 +146,8 @@ in
     nixpkgs-fmt # Nix formatter
 
     bun
+
+    racket
 
     sqlite
     litecli

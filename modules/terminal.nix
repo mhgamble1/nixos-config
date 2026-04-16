@@ -265,6 +265,28 @@
         body = "bat --paging=always ~/cheatsheet.md";
       };
 
+      # Download a clip's audio as a high-quality MP3.
+      # Usage: ytclip <start> <end> <url>
+      ytclip = {
+        description = "Download audio from a video clip as MP3";
+        body = ''
+          if test (count $argv) -ne 3
+            echo "Usage: ytclip <start> <end> <url>"
+            echo "Example: ytclip 00:30 01:10 https://youtube.com/watch?v=..."
+            return 1
+          end
+
+          set start $argv[1]
+          set end $argv[2]
+          set url $argv[3]
+
+          yt-dlp -x --audio-format mp3 --audio-quality 0 \
+            --download-sections "*$start-$end" \
+            -o "%(title)s.%(ext)s" \
+            "$url"
+        '';
+      };
+
       # Connect to an exe.dev VM directly, with keepalives, ControlMaster, and
       # tmux session persistence. Usage: exe <hostname-or-ip>
       # Reconnecting after a drop reattaches the same session — state is preserved.
