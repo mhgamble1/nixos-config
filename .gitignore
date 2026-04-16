@@ -5,3 +5,6 @@ result-*
 # Secrets
 smb-credentials
 secrets.nix
+
+# AI tooling
+.codex
