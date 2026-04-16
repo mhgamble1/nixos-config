@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   # ── Timezone and locale ────────────────────────────────────────────────
@@ -19,8 +19,33 @@
 
   # ── Nix settings ──────────────────────────────────────────────────────
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.max-jobs = 2;
-  nix.settings.cores = 4;
+
+  # ── Binary caches ─────────────────────────────────────────────────────
+  nix.settings.extra-substituters = [
+    "https://cuda-maintainers.cachix.org"
+    "https://nix-community.cachix.org"
+  ];
+  nix.settings.extra-trusted-public-keys = [
+    "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCYg3Fs="
+  ];
+
+  # Run the Nix daemon at lowest CPU/IO priority so builds don't compete
+  # with the desktop. No hard core caps — let the scheduler do its job.
+  systemd.services.nix-daemon.serviceConfig = {
+    Nice = lib.mkForce 19;
+    IOSchedulingClass = lib.mkForce "idle";
+    CPUSchedulingPolicy = lib.mkForce "idle";
+  };
+
+  # Sandbox (default on Linux, made explicit here)
+  nix.settings.sandbox = true;
+
+  # Allow sandboxed builds to read the ccache store
+  nix.settings.extra-sandbox-paths = [ "/var/cache/ccache" ];
+
+  # ── ccache — shared compiler cache for local builds ───────────────────
+  programs.ccache.enable = true;
 
   # ── Unfree packages ───────────────────────────────────────────────────
   nixpkgs.config.allowUnfree = true;
