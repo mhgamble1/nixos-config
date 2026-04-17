@@ -1,7 +1,7 @@
 { pkgs, llm-agents-nix, ... }:
 
 let
-  agents = llm-agents-nix.packages.${pkgs.system};
+  agents = llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   home.packages = [
