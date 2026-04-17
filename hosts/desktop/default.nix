@@ -39,6 +39,7 @@
   };
 
   # Disable Mullvad auto-connect — use manually to avoid conflicting with Tailscale
+  # Uses pkgs.mullvad (the daemon package) so the CLI version matches the running daemon.
   systemd.services.mullvad-autoconnect-disable = {
     description = "Disable Mullvad auto-connect on boot";
     after = [ "mullvad-daemon.service" ];
@@ -46,7 +47,9 @@
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad auto-connect set off";
+      # Wait up to 10s for the daemon socket, then run the command.
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${pkgs.mullvad}/bin/mullvad status >/dev/null 2>&1 && break; sleep 2; done'";
+      ExecStart = "${pkgs.mullvad}/bin/mullvad auto-connect set off";
       RemainAfterExit = true;
     };
   };
@@ -59,7 +62,8 @@
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad lan set allow";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${pkgs.mullvad}/bin/mullvad status >/dev/null 2>&1 && break; sleep 2; done'";
+      ExecStart = "${pkgs.mullvad}/bin/mullvad lan set allow";
       RemainAfterExit = true;
     };
   };

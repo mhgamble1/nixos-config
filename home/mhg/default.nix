@@ -3,6 +3,7 @@
 {
   imports = [
     ../../modules/hyprland.nix
+    ../../modules/music.nix
     ../../modules/terminal.nix
     ../../modules/dev.nix
     ../../modules/agents.nix
