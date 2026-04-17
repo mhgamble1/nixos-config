@@ -11,4 +11,6 @@ in
     agents.gemini-cli
     agents.opencode
   ];
+
+  home.file.".claude/CLAUDE.md".source = ../home/mhg/claude/CLAUDE.md;
 }
