@@ -17,6 +17,10 @@
     enable = true;
     wayland.enable = true;
   };
+  # Pin the default session to the plain Hyprland entry. Without this, SDDM
+  # may default to hyprland-uwsm.desktop (added by a nixpkgs bump) which
+  # requires UWSM user-systemd units that we don't install (withUWSM = false).
+  services.displayManager.defaultSession = "hyprland";
 
   # ── dconf — needed for GTK4 apps and portals ──────────────────────────
   programs.dconf.enable = true;
