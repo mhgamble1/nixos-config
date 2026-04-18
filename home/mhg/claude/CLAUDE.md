@@ -33,3 +33,10 @@
 - Prefer simple, direct implementations over abstraction-heavy designs.
 - Avoid adding frameworks before there is clear evidence they are needed.
 - Keep solutions aligned with the repo's existing patterns.
+
+## Learning priorities
+- Prefer understanding the runtime and systems my code actually executes on
+- Study abstractions from the top down, not bottom up
+- Only dive into lower-level details (OS, compilers, hardware) when they explain real problems
+- Prioritize networking, runtime behavior, and system performance over low-level implementation details
+- Avoid deep dives into low-leverage topics unless explicitly needed
