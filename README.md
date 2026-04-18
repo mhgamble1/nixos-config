@@ -34,7 +34,9 @@ NixOS system configuration for a Wayland/Hyprland workstation. Flake-based, git-
 │   │   └── hardware/nvidia.nix        # NVIDIA drivers, modesetting, graphics
 │   ├── hyprland.nix                   # Hyprland WM, Waybar, fuzzel, mako, keybinds
 │   ├── terminal.nix                   # Ghostty, tmux, fish, starship, bat, fzf, zoxide
-│   ├── dev.nix                        # Helix, Go, Python/uv, Nix LSP, SQLite
+│   ├── dev.nix                        # Helix, Zed, Go, Python/uv, Nix LSP, SQLite
+│   ├── music.nix                      # LMMS, SunVox, Audacity
+│   ├── agents.nix                     # AI agents: Claude Code, Codex, Gemini CLI, Crush, OpenCode
 │   └── theming.nix                    # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
 ├── home/mhg/
 │   ├── default.nix                    # Home Manager root: git, SSH, yazi, per-user packages
@@ -59,8 +61,13 @@ NixOS system configuration for a Wayland/Hyprland workstation. Flake-based, git-
 | Editor        | Helix          | Modal, LSP, Tokyo Night theme                    |
 | File manager  | yazi           | TUI, opens floating via `SUPER+E`                |
 | Music         | spotify_player | TUI Spotify client, opens floating via `SUPER+M` |
+| Music prod    | LMMS           | DAW                                              |
+| Music prod    | SunVox         | Modular tracker/DAW                              |
+| Audio         | Audacity       | Audio editor                                     |
+| Notes         | Obsidian       | Markdown knowledge base                          |
+| Editor (GUI)  | Zed            | GUI editor, forced XWayland (NVIDIA workaround)  |
 | Browser       | Firefox        |                                                  |
-| VPN           | Mullvad        | Auto-connects on boot                            |
+| VPN           | Mullvad        | Daemon enabled; auto-connect **disabled** (use manually to avoid Tailscale conflicts) |
 | NAS           | Samba/CIFS     | Automounts `/mnt/nas` on access                  |
 
 ---
@@ -149,11 +156,13 @@ ssh -T git@github.com       # verify
 
 ## Claude Code
 
-Claude is **not** installed as a system package. It runs via a flake from the fish alias:
+Claude Code is installed as a Home Manager package via `llm-agents-nix` (see `modules/agents.nix`). The `claude` binary is available directly on `$PATH` — no alias required.
 
-```fish
-claude   # expands to: nix run github:sadjow/claude-code-nix --
-```
+---
+
+## Troubleshooting
+
+See [`INCIDENTS.md`](INCIDENTS.md) for a log of past incidents, root causes, and resolutions.
 
 ---
 
@@ -177,9 +186,12 @@ sudo nix-store --optimise
 - [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
 - [ ] **Hostname** — rename from `nixos` to something meaningful in `flake.nix`
 - [ ] **Laptop host** — flesh out `hosts/laptop/default.nix` for Dell XPS
+- [ ] **ccache wiring** — `programs.ccache.enable = true` is set but `packageNames` is not configured; nothing actually routes through ccache yet. Identify packages worth caching (CUDA-heavy builds, anything compiled locally) and add them.
+- [ ] **BIOS/UEFI audit** — review firmware settings: ensure UEFI secure boot posture is understood, check for firmware updates, consider migrating boot loader from GRUB (BIOS-mode) to systemd-boot (UEFI) if supported by the hardware.
 
 ### Medium-term
 
+- [ ] **UWSM migration** — `hyprland-uwsm.desktop` is now available in SDDM but `programs.hyprland.withUWSM` is pinned to `false` (default). UWSM is the direction Hyprland is moving toward — it runs the compositor inside a proper systemd user session graph, which improves crash isolation and lifecycle management. When ready, enable `withUWSM = true`, validate NVIDIA env var propagation and session bootstrap behaviour, and switch `defaultSession` to `"hyprland-uwsm"`. See `INCIDENTS.md` 2026-04-18 for the failure mode to avoid.
 - [ ] **Secrets management** — `agenix` or `sops-nix` for NAS credentials and API keys; would eliminate the `--impure` flag requirement
 
 ### Long-term
