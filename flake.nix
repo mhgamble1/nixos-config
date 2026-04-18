@@ -28,8 +28,8 @@
     nixosConfigurations = {
 
       # Desktop — AMD CPU, NVIDIA GPU, daily driver
-      # nixos-rebuild switch --flake /etc/nixos#nixos
-      nixos = nixpkgs.lib.nixosSystem {
+      # nixos-rebuild switch --flake /etc/nixos#desktop
+      desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit secrets; };
         modules = [

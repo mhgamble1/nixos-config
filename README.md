@@ -182,12 +182,12 @@ sudo nix-store --optimise
 
 ### Near-term
 
-- [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key
-- [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
-- [ ] **Hostname** — rename from `nixos` to something meaningful in `flake.nix`
-- [ ] **Laptop host** — flesh out `hosts/laptop/default.nix` for Dell XPS
-- [ ] **ccache wiring** — `programs.ccache.enable = true` is set but `packageNames` is not configured; nothing actually routes through ccache yet. Identify packages worth caching (CUDA-heavy builds, anything compiled locally) and add them.
 - [ ] **BIOS/UEFI audit** — review firmware settings: ensure UEFI secure boot posture is understood, check for firmware updates, consider migrating boot loader from GRUB (BIOS-mode) to systemd-boot (UEFI) if supported by the hardware.
+- [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
+- [ ] **ccache wiring** — `programs.ccache.enable = true` is set but `packageNames` is not configured; nothing actually routes through ccache yet. Identify packages worth caching (CUDA-heavy builds, anything compiled locally) and add them.
+- [x] **Hostname** — renamed from `nixos` to `desktop` in `flake.nix` and `hosts/desktop/default.nix`
+- [x] **Laptop host** — Dell XPS provisioned and running
+- [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key
 
 ### Medium-term
 

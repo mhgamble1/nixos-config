@@ -11,7 +11,7 @@
     ../../modules/nixos/hardware/nvidia.nix
   ];
 
-  networking.hostName = "nixos";
+  networking.hostName = "desktop";
 
   # ── Boot ──────────────────────────────────────────────────────────────
   boot.loader.grub.enable = true;
