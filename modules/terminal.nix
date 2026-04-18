@@ -59,12 +59,9 @@
     khal
 
     jujutsu
-
-    # Pomodoro timer
-    (pkgs.writers.writePython3Bin "pomo" { flakeIgnore = [ "E501" ]; } (builtins.readFile ../scripts/pomo.py))
   ];
 
-  # zoxide — smarter cd with frecency ranking
+  # zoxide — smarter cd
   programs.zoxide = {
     enable = true;
     enableFishIntegration = true;
