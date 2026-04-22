@@ -146,6 +146,9 @@ in
     nixpkgs-fmt # Nix formatter
 
     bun
+    pnpm
+
+    gleam
 
     racket
 
