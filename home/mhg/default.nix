@@ -32,6 +32,13 @@
       serverAliveInterval = 60;
       serverAliveCountMax = 10;
     };
+    # exe.dev gateway
+    matchBlocks."exe.dev" = {
+      user = "mhg";
+      identityFile = "~/.ssh/id_ed25519";
+      serverAliveInterval = 60;
+      serverAliveCountMax = 3;
+    };
     # exe.dev VMs — direct SSH with keepalives and connection multiplexing
     matchBlocks."*.exe.xyz" = {
       user = "exedev";
@@ -101,6 +108,8 @@
     jq
     htop
     unzip
+
+    google-chrome
 
     calibre
 
