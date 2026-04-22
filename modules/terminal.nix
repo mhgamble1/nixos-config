@@ -246,9 +246,9 @@
       top = "btm"; # bottom system monitor
 
       # NixOS
-      nrs = "sudo nixos-rebuild switch --flake /etc/nixos --impure";
-      nrsu = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos --impure";
-      nrb = "sudo nixos-rebuild boot --flake /etc/nixos --impure";
+      nrs = "sudo nixos-rebuild switch --flake /etc/nixos#desktop --impure";
+      nrsu = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos#desktop --impure";
+      nrb = "sudo nixos-rebuild boot --flake /etc/nixos#desktop --impure";
       ne = "hx /etc/nixos/hosts/desktop/default.nix";
       nfl = "hx /etc/nixos/flake.nix";
       nhm = "hx /etc/nixos/home/mhg/default.nix";
