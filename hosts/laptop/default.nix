@@ -21,6 +21,24 @@
 
   networking.hostName = "laptop";
 
+  # ── Distributed builds — offload to desktop via Tailscale ─────────────
+  # SSH key setup required (one-time, on the laptop):
+  #   sudo ssh-keygen -t ed25519 -f /etc/nix/builder-key -N ""
+  #   # then add the pubkey to desktop's secrets.authorizedKeys.mark
+  nix.distributedBuilds = true;
+  nix.buildMachines = [
+    {
+      hostName = "desktop.tail25cfe0.ts.net";
+      system = "x86_64-linux";
+      protocol = "ssh-ng";
+      sshUser = "mhg";
+      sshKey = "/etc/nix/builder-key";
+      maxJobs = 8;
+      speedFactor = 2;
+      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    }
+  ];
+
   # TODO: configure bootloader for laptop (likely systemd-boot on EFI)
   # boot.loader.systemd-boot.enable = true;
   # boot.loader.efi.canTouchEfiVariables = true;

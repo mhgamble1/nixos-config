@@ -20,6 +20,10 @@
   # ── Nix settings ──────────────────────────────────────────────────────
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # Allow mhg to use the nix daemon as a trusted user (required for
+  # distributed builds — the remote nix daemon must trust the connecting user)
+  nix.settings.trusted-users = [ "root" "mhg" ];
+
   # ── Binary caches ─────────────────────────────────────────────────────
   nix.settings.extra-substituters = [
     "https://cuda-maintainers.cachix.org"
