@@ -8,6 +8,7 @@ in
     agents.crush
     agents.claude-code
     agents.codex
+    agents.goose-cli
     agents.gemini-cli
     agents.opencode
   ];
