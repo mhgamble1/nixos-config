@@ -182,6 +182,7 @@ sudo nix-store --optimise
 
 ### Near-term
 
+- [ ] **Unpin nixpkgs** — pinned to `4c1018d` (2026-04-09) because Electron 41.2.0 + kernel 6.18.22 break Spotify (and likely Zed/other Electron apps) on NVIDIA Wayland. Before unpinning, check that `electron` in the new nixpkgs has moved past 41.2.x with a fix, or that a NVIDIA/Wayland workaround has landed. See `INCIDENTS.md` and `flake.nix` comment.
 - [ ] **BIOS/UEFI audit** — review firmware settings: ensure UEFI secure boot posture is understood, check for firmware updates, consider migrating boot loader from GRUB (BIOS-mode) to systemd-boot (UEFI) if supported by the hardware.
 - [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
 - [ ] **ccache wiring** — `programs.ccache.enable = true` is set but `packageNames` is not configured; nothing actually routes through ccache yet. Identify packages worth caching (CUDA-heavy builds, anything compiled locally) and add them.

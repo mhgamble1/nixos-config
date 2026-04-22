@@ -2,7 +2,9 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Pinned to last known-good: Electron 41.2.0 + kernel 6.18.22 break Spotify on NVIDIA.
+    # Unpin when upstream fixes electron/wayland on NVIDIA (track: nixpkgs electron bump).
+    nixpkgs.url = "github:nixos/nixpkgs/4c1018dae018162ec878d42fec712642d214fdfa";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
