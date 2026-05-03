@@ -148,6 +148,8 @@
     # Downloads
     aria2
     yt-dlp
+    openbooks
+    nicotine-plus
 
     circumflex
 
