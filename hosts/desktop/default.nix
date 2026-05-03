@@ -77,5 +77,10 @@
     };
   };
 
+  # ── Desktop-only packages ─────────────────────────────────────────────
+  environment.systemPackages = with pkgs; [
+    rclone
+  ];
+
   system.stateVersion = "25.11";
 }
