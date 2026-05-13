@@ -50,7 +50,14 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
   };
+
+  # Realtime scheduling for audio apps (e.g. hiresTI ALSA mmap thread)
+  security.pam.loginLimits = [
+    { domain = "@audio"; item = "rtprio";  type = "-"; value = "95"; }
+    { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
+  ];
 
   # ── Printing ──────────────────────────────────────────────────────────
   services.printing.enable = true;

@@ -6,7 +6,7 @@
     isNormalUser = true;
     description = "mhg";
     shell = pkgs.fish;
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" ];
     openssh.authorizedKeys.keys = secrets.authorizedKeys.mark;
   };
 

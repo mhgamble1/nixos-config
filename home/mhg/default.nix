@@ -1,4 +1,4 @@
-{ config, pkgs, lib, secrets, ... }:
+{ config, pkgs, lib, secrets, hires-ti, ... }:
 
 {
   imports = [
@@ -157,5 +157,8 @@
 
     # Media processing
     ffmpeg
+
+    # Hi-res music streaming (Tidal)
+    hires-ti.packages.${pkgs.system}.default
   ];
 }
