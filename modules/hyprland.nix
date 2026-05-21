@@ -183,8 +183,11 @@ in
       };
 
       dwindle = {
-        pseudotile = true;
         preserve_split = true;
+      };
+
+      ecosystem = {
+        no_update_news = true;
       };
 
       # ── Cursor (required for NVIDIA) ──────────────────────────────────
@@ -231,7 +234,7 @@ in
         "$mod, F, fullscreen, 0"
         "$mod SHIFT, F, togglefloating,"
         "$mod, P, pseudo," # dwindle pseudotile
-        "$mod, S, togglesplit," # dwindle split direction
+        "$mod, S, layoutmsg, togglesplit" # dwindle split direction
 
         # Focus — vim keys
         "$mod, h, movefocus, l"
