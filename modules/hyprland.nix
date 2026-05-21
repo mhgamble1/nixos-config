@@ -105,6 +105,7 @@ in
   # Hyprland compositor configuration
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "hyprlang";
 
     settings = {
       # ── NVIDIA environment variables ──────────────────────────────────
