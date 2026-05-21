@@ -160,5 +160,6 @@
 
     # Hi-res music streaming (Tidal)
     hires-ti.packages.${pkgs.system}.default
+    tidal-hifi
   ];
 }
