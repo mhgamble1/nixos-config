@@ -2,6 +2,7 @@
 
 {
   networking.networkmanager.enable = true;
+  networking.networkmanager.unmanaged = [ "interface-name:wlp4s0" ];
 
   # ── Tailscale ─────────────────────────────────────────────────────────
   services.tailscale.enable = true;
