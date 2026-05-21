@@ -32,9 +32,9 @@
         # Desktop — AMD CPU, NVIDIA GPU, daily driver
         # nixos-rebuild switch --flake /etc/nixos#desktop
         desktop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
           specialArgs = { inherit secrets; };
           modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/desktop
             home-manager.nixosModules.home-manager
             hmConfig
@@ -44,9 +44,9 @@
         # Laptop — Dell XPS (scaffold, not yet provisioned)
         # Add hosts/laptop/hardware-configuration.nix before deploying
         laptop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
           specialArgs = { inherit secrets; };
           modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/laptop
             home-manager.nixosModules.home-manager
             hmConfig
