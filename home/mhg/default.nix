@@ -20,32 +20,32 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks."github.com" = {
-      user = "git";
-      identityFile = "~/.ssh/id_ed25519";
-    };
-    # Hermes VPS — AI agent / remote workspace
-    matchBlocks."hermes" = {
-      hostname = secrets.hermes.hostname;
-      user = secrets.hermes.user;
-      identityFile = "~/.ssh/id_ed25519";
-      serverAliveInterval = 60;
-      serverAliveCountMax = 10;
-    };
-    # exe.dev gateway
-    matchBlocks."exe.dev" = {
-      user = "mhg";
-      identityFile = "~/.ssh/id_ed25519";
-      serverAliveInterval = 60;
-      serverAliveCountMax = 3;
-    };
-    # exe.dev VMs — direct SSH with keepalives and connection multiplexing
-    matchBlocks."*.exe.xyz" = {
-      user = "exedev";
-      identityFile = "~/.ssh/id_ed25519";
-      serverAliveInterval = 30;
-      serverAliveCountMax = 6;
-      extraOptions = {
+    settings = {
+      "github.com" = {
+        User = "git";
+        IdentityFile = "~/.ssh/id_ed25519";
+      };
+      # Hermes VPS — AI agent / remote workspace
+      "hermes" = {
+        Hostname = secrets.hermes.hostname;
+        User = secrets.hermes.user;
+        IdentityFile = "~/.ssh/id_ed25519";
+        ServerAliveInterval = 60;
+        ServerAliveCountMax = 10;
+      };
+      # exe.dev gateway
+      "exe.dev" = {
+        User = "mhg";
+        IdentityFile = "~/.ssh/id_ed25519";
+        ServerAliveInterval = 60;
+        ServerAliveCountMax = 3;
+      };
+      # exe.dev VMs — direct SSH with keepalives and connection multiplexing
+      "*.exe.xyz" = {
+        User = "exedev";
+        IdentityFile = "~/.ssh/id_ed25519";
+        ServerAliveInterval = 30;
+        ServerAliveCountMax = 6;
         ControlMaster = "auto";
         ControlPath = "~/.ssh/cm-%r@%h:%p";
         ControlPersist = "10m";
