@@ -117,18 +117,20 @@ in
         "NVD_BACKEND,direct"
         "ELECTRON_OZONE_PLATFORM_HINT,wayland"
         "MOZ_ENABLE_WAYLAND,1"
+        "ADW_DEBUG_COLOR_SCHEME,prefer-dark"
       ];
 
       # ── Monitor ───────────────────────────────────────────────────────
       # Auto-detect all monitors. Override with explicit config if needed:
       # monitor = "DP-1,2560x1440@144,0x0,1";
-      monitor = ",preferred,auto,1";
+      monitor = "HDMI-A-1,3440x1440@120,0x0,1";
 
       # ── Autostart ─────────────────────────────────────────────────────
       exec-once = [
         "waybar"
         "mako"
         "nm-applet --indicator"
+        "blueman-applet"
         "hypr-session-bootstrap"
         # hypridle is started automatically as a systemd user service (see services.hypridle below)
       ];
@@ -174,11 +176,11 @@ in
         enabled = true;
         bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
         animation = [
-          "windows, 1, 7, myBezier"
-          "windowsOut, 1, 7, default, popin 80%"
-          "border, 1, 10, default"
-          "fade, 1, 7, default"
-          "workspaces, 1, 6, default"
+          "windows, 1, 4, myBezier"
+          "windowsOut, 1, 4, default, popin 80%"
+          "border, 1, 5, default"
+          "fade, 1, 4, default"
+          "workspaces, 1, 3, default"
         ];
       };
 
@@ -192,7 +194,7 @@ in
 
       # ── Cursor (required for NVIDIA) ──────────────────────────────────
       cursor = {
-        no_hardware_cursors = true;
+        no_hardware_cursors = false;
       };
 
       # ── Misc ──────────────────────────────────────────────────────────
