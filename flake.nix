@@ -8,10 +8,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents-nix.url = "github:numtide/llm-agents.nix";
-    hires-ti.url = "github:yelanxin/hiresTI";
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, hires-ti, ... }:
+  outputs = { nixpkgs, home-manager, llm-agents-nix, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -22,7 +21,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix hires-ti; };
+        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix; };
         home-manager.users.mhg = import ./home/mhg;
       };
     in

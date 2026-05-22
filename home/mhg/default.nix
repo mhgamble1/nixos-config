@@ -1,4 +1,4 @@
-{ config, pkgs, lib, secrets, hires-ti, ... }:
+{ config, pkgs, lib, secrets, ... }:
 
 {
   imports = [
@@ -89,12 +89,20 @@
   # ── XDG ───────────────────────────────────────────────────────────────
   xdg.enable = true;
 
+  # ── GTK / GNOME — dark mode for libadwaita apps (e.g. high-tide) ─────
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+  };
+
   # ── Session variables ─────────────────────────────────────────────────
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
     TERMINAL = "ghostty";
     NIXOS_OZONE_WL = "1";
+    ADW_DEBUG_COLOR_SCHEME = "prefer-dark";
   };
 
   # ── Packages ──────────────────────────────────────────────────────────
@@ -158,8 +166,10 @@
     # Media processing
     ffmpeg
 
-    # Hi-res music streaming (Tidal)
-    hires-ti.packages.${pkgs.system}.default
-    tidal-hifi
+    # TIDAL music player
+    high-tide
+
+    # Wayland key event viewer
+    wev
   ];
 }

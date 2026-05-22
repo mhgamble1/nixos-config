@@ -53,7 +53,7 @@
     jack.enable = true;
   };
 
-  # Realtime scheduling for audio apps (e.g. hiresTI ALSA mmap thread)
+  # Realtime scheduling for audio apps (PipeWire, etc.)
   security.pam.loginLimits = [
     { domain = "@audio"; item = "rtprio";  type = "-"; value = "95"; }
     { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
@@ -61,6 +61,10 @@
 
   # ── Printing ──────────────────────────────────────────────────────────
   services.printing.enable = true;
+
+  # ── Secret Service — required by apps using libsecret (e.g. high-tide) ──
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
 
   # ── Firefox ───────────────────────────────────────────────────────────
   programs.firefox.enable = true;
