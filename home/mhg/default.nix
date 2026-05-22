@@ -101,6 +101,7 @@
     EDITOR = "hx";
     VISUAL = "hx";
     TERMINAL = "ghostty";
+    BROWSER = "firefox";
     NIXOS_OZONE_WL = "1";
     ADW_DEBUG_COLOR_SCHEME = "prefer-dark";
   };

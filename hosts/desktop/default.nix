@@ -17,6 +17,8 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true;
+  # AMD platform (SP5100 southbridge) needs reboot=pci to avoid GPU hang on reboot
+  boot.kernelParams = [ "reboot=pci" ];
 
   # Hibernation — point kernel to swap partition for resume image
   boot.resumeDevice = "/dev/disk/by-uuid/6430a86b-0e47-4c9b-ad47-619efb5a39e8";
