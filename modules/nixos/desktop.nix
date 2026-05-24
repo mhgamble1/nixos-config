@@ -12,15 +12,19 @@
     variant = "";
   };
 
-  # ── Display manager — SDDM with Wayland support ───────────────────────
-  services.displayManager.sddm = {
+  # ── Display manager — greetd with tuigreet ───────────────────────────
+  # greetd launches Hyprland directly as the PAM session command, so PAM
+  # environment variables (incl. GNOME_KEYRING_CONTROL) are inherited by
+  # the compositor and all child processes — fixing keyring auto-unlock.
+  services.greetd = {
     enable = true;
-    wayland.enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${pkgs.hyprland}/bin/start-hyprland";
+        user = "greeter";
+      };
+    };
   };
-  # Pin the default session to the plain Hyprland entry. Without this, SDDM
-  # may default to hyprland-uwsm.desktop (added by a nixpkgs bump) which
-  # requires UWSM user-systemd units that we don't install (withUWSM = false).
-  services.displayManager.defaultSession = "hyprland";
 
   # ── dconf — needed for GTK4 apps and portals ──────────────────────────
   programs.dconf.enable = true;
@@ -64,7 +68,7 @@
 
   # ── Secret Service — required by apps using libsecret (e.g. high-tide) ──
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.sddm.enableGnomeKeyring = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 
   # ── Firefox ───────────────────────────────────────────────────────────
   programs.firefox.enable = true;
