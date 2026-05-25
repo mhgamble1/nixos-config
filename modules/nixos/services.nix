@@ -20,6 +20,28 @@
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
+  # BlueZ main.conf — tuned for BLE HID reliability (Glove80).
+  #
+  # FastConnectable: speeds up link re-establishment so GATT reads happen after
+  #   the LE link is stable, reducing "Attribute can't be read" errors on reconnect.
+  #
+  # JustWorksRepairing: auto-handles bonding without user prompts on reconnect,
+  #   preventing the cascade where BlueZ drops the link because it can't re-bond.
+  #
+  # LE connection parameters deliberately omitted. Setting a tight interval range
+  # (e.g. Min=7, Max=9) causes BlueZ to reject ZMK's post-connect parameter update
+  # request (ZMK asks for ~50ms interval for power saving) — BlueZ rejects it as
+  # out-of-range, ZMK disconnects. Let BlueZ and the keyboard negotiate freely.
+  #
+  # Experimental deliberately omitted — enables RAP/BAP profiles the Intel adapter
+  # (Legacy ROM 2015) doesn't support, causing rap_accept() failures every reconnect.
+  hardware.bluetooth.settings = {
+    General = {
+      FastConnectable = true;
+      JustWorksRepairing = "always";
+    };
+  };
+
   # The btusb module enables autosuspend by default (enable_autosuspend=Y), which
   # overrides udev rules written on ACTION=="add". Disabling it at the module level
   # is the only reliable way to keep the Intel adapter (8087:0aa7) from resetting.
