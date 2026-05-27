@@ -9,6 +9,7 @@
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
     ../../modules/nixos/hardware/nvidia.nix
+    ../../modules/nixos/audiobookshelf.nix
   ];
 
   networking.hostName = "desktop";
