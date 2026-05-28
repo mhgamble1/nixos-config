@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 
 let
   # Startup profile: launch these apps onto fixed workspaces so the session
@@ -9,18 +9,6 @@ let
       workspace = "name:1:code";
       classRegex = "^(code-term)$";
       command = "${pkgs.ghostty}/bin/ghostty --class=code-term";
-    }
-    {
-      name = "web-browser";
-      workspace = "name:2:web";
-      classRegex = "^(firefox)$";
-      command = "${pkgs.firefox}/bin/firefox";
-    }
-    {
-      name = "music-spotify";
-      workspace = "name:4:music";
-      classRegex = "^(Spotify)$";
-      command = "${pkgs.spotify}/bin/spotify";
     }
   ];
 
@@ -121,9 +109,9 @@ in
       ];
 
       # ── Monitor ───────────────────────────────────────────────────────
-      # Auto-detect all monitors. Override with explicit config if needed:
-      # monitor = "DP-1,2560x1440@144,0x0,1";
-      monitor = "HDMI-A-1,3440x1440@120,0x0,1";
+      monitor = if osConfig.networking.hostName == "desktop"
+        then "HDMI-A-1,3440x1440@120,0x0,1"
+        else "eDP-1,1920x1080@60,0x0,1.5";
 
       # ── Autostart ─────────────────────────────────────────────────────
       exec-once = [

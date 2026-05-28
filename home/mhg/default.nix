@@ -64,6 +64,7 @@
       gpg.format = "ssh";
       commit.gpgsign = false; # enable once SSH signing key is set
       pull.rebase = false;
+      url."git@github.com:".insteadOf = "https://github.com/";
     };
   };
 
@@ -132,9 +133,6 @@
     # Wayland utilities
     wlr-randr
 
-    # Spotify TUI client
-    spotify-player
-
     # Discord
     discord
 
@@ -150,7 +148,6 @@
 
     # Media / docs
     vlc
-    spotify
     zathura
     gnome-text-editor
 
