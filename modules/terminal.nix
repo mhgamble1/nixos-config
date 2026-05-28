@@ -246,9 +246,6 @@
       top = "btm"; # bottom system monitor
 
       # NixOS
-      nrs = "sudo nixos-rebuild switch --flake /etc/nixos#desktop --impure";
-      nrsu = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos#desktop --impure";
-      nrb = "sudo nixos-rebuild boot --flake /etc/nixos#desktop --impure";
       ne = "hx /etc/nixos/hosts/desktop/default.nix";
       nfl = "hx /etc/nixos/flake.nix";
       nhm = "hx /etc/nixos/home/mhg/default.nix";
@@ -256,6 +253,19 @@
     };
 
     functions = {
+      nrs = {
+        description = "NixOS rebuild switch for current host";
+        body = "sudo nixos-rebuild switch --flake /etc/nixos#(hostname) --impure $argv";
+      };
+      nrsu = {
+        description = "NixOS rebuild switch with flake update for current host";
+        body = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos#(hostname) --impure $argv";
+      };
+      nrb = {
+        description = "NixOS rebuild boot for current host";
+        body = "sudo nixos-rebuild boot --flake /etc/nixos#(hostname) --impure $argv";
+      };
+
       # View the system cheatsheet in a pager
       cht = {
         description = "View the system cheatsheet";

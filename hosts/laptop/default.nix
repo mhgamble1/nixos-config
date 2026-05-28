@@ -14,6 +14,21 @@
 
   networking.hostName = "laptop";
 
+  # ── Distributed builds — offload to desktop via Tailscale ─────────────
+  nix.distributedBuilds = true;
+  nix.buildMachines = [
+    {
+      hostName = "desktop.tail25cfe0.ts.net";
+      system = "x86_64-linux";
+      protocol = "ssh-ng";
+      sshUser = "mhg";
+      sshKey = "/etc/nix/builder-key";
+      maxJobs = 8;
+      speedFactor = 2;
+      supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
+    }
+  ];
+
   # ── Boot ──────────────────────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
