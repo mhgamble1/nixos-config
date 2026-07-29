@@ -7,7 +7,8 @@
     ../../modules/dev.nix
     ../../modules/agents.nix
     ../../modules/theming.nix
-  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix;
+  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix
+    ++ lib.optional (osConfig.networking.hostName == "laptop") ../../modules/gnome-home.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
