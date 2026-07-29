@@ -7,9 +7,10 @@
     ./hardware-configuration.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/networking.nix
-    ../../modules/nixos/desktop.nix
+    ../../modules/nixos/gnome.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
+    ../../modules/nixos/audiobookshelf.nix
   ];
 
   networking.hostName = "laptop";
@@ -28,6 +29,23 @@
       supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
     }
   ];
+
+  # ── NAS — Samba automount ──────────────────────────────────────────────
+  fileSystems."/mnt/nas" = {
+    device = "//${secrets.nas.ip}/nas";
+    fsType = "cifs";
+    options = [
+      "credentials=/etc/nixos/smb-credentials"
+      "uid=1000"
+      "gid=100"
+      "iocharset=utf8"
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=60"
+      "x-systemd.device-timeout=5s"
+      "x-systemd.mount-timeout=5s"
+    ];
+  };
 
   # ── Boot ──────────────────────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;

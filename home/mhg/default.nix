@@ -1,14 +1,13 @@
-{ config, pkgs, lib, secrets, ... }:
+{ config, pkgs, lib, secrets, osConfig, ... }:
 
 {
   imports = [
-    ../../modules/hyprland.nix
     ../../modules/music.nix
     ../../modules/terminal.nix
     ../../modules/dev.nix
     ../../modules/agents.nix
     ../../modules/theming.nix
-  ];
+  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";

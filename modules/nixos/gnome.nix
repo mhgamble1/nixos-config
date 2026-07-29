@@ -1,0 +1,49 @@
+{ pkgs, ... }:
+
+{
+  # ── X11 base — needed for keymap and xwayland ─────────────────────────
+  services.xserver.enable = true;
+  services.xserver.excludePackages = [ pkgs.xterm ];
+
+  # ── Keymap ────────────────────────────────────────────────────────────
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  # ── Display manager — GDM ─────────────────────────────────────────────
+  services.displayManager.gdm = {
+    enable = true;
+    wayland = true;
+  };
+
+  # ── GNOME desktop ─────────────────────────────────────────────────────
+  services.desktopManager.gnome.enable = true;
+
+  # Remove apps we don't use (have better alternatives installed)
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-tour        # first-run welcome tour
+    gnome-connections # remote desktop client
+    epiphany          # GNOME browser (using Firefox)
+    geary             # email client
+    totem             # video player (using VLC)
+    gnome-music       # music player (using spotify_player)
+  ];
+
+  # ── Audio — PipeWire ──────────────────────────────────────────────────
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
+  # ── Printing ──────────────────────────────────────────────────────────
+  services.printing.enable = true;
+
+  # ── Firefox ───────────────────────────────────────────────────────────
+  programs.firefox.enable = true;
+}
