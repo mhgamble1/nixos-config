@@ -122,15 +122,9 @@
 
     calibre
 
-    w3m
-    browsh
-
     newsboat
 
     tealdeer
-
-    # Wayland utilities
-    wlr-randr
 
     # Discord
     discord
@@ -148,8 +142,6 @@
     # Media / docs
     vlc
     zathura
-    gnome-text-editor
-
     # Downloads
     aria2
     yt-dlp
@@ -158,15 +150,11 @@
 
     circumflex
 
-    cheese
-
     # Media processing
     ffmpeg
 
     # TIDAL music player
     high-tide
 
-    # Wayland key event viewer
-    wev
   ];
 }

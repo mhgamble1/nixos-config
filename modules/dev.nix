@@ -1,19 +1,5 @@
 { config, pkgs, lib, ... }:
 
-let
-  # Zed has recurring Wayland/NVIDIA hangs on this machine. Force XWayland by
-  # removing WAYLAND_DISPLAY from the launched process.
-  zedXwayland = pkgs.symlinkJoin {
-    name = "zed-editor-xwayland-${pkgs.zed-editor.version}";
-    paths = [ pkgs.zed-editor ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/zeditor \
-        --unset WAYLAND_DISPLAY \
-        --unset XDG_BACKEND
-    '';
-  };
-in
 {
   # ── Helix ─────────────────────────────────────────────────────────────
   programs.helix = {
@@ -148,57 +134,11 @@ in
     bun
     pnpm
 
-    gleam
-
-    racket
-
     sqlite
     litecli
-    (llm.withPlugins {
-      llm-ollama = true;
-      llm-jq = true;
-    })
-
-    llama-cpp
 
     bubblewrap
 
     gh
   ];
-
-  programs.zed-editor = {
-    enable = true;
-    package = zedXwayland;
-    userSettings = {
-      auto_update = false;
-      vim_mode = false;
-      restore_on_startup = "empty_tab";
-      restore_on_file_reopen = false;
-      session = {
-        restore_unsaved_buffers = false;
-        trust_all_worktrees = false;
-      };
-      theme = {
-        mode = "dark";
-        dark = "One Dark";
-        light = "One Light";
-      };
-      ui_font_size = 16;
-      buffer_font_size = 15;
-      soft_wrap = "editor_width";
-      project_panel = {
-        git_status = false;
-      };
-      file_finder = {
-        git_status = false;
-      };
-      git_panel = {
-        button = false;
-      };
-      telemetry = {
-        metrics = false;
-        diagnostics = false;
-      };
-    };
-  };
 }
