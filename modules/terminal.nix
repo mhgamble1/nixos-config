@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, osConfig, ... }:
 
 {
   # ── Modern Unix utilities ─────────────────────────────────────────────
@@ -118,7 +118,8 @@
       background-opacity = 0.95;
       window-padding-x = 10;
       window-padding-y = 8;
-      window-decoration = false;
+      # Hyprland draws its own borders; GNOME needs decorations for resize/move
+      window-decoration = osConfig.networking.hostName == "desktop";
 
       # Tab bar
       gtk-tabs-location = "bottom";
