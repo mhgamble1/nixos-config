@@ -41,32 +41,16 @@
     ];
   };
 
-  # Disable Mullvad auto-connect — use manually to avoid conflicting with Tailscale
-  # Uses pkgs.mullvad (the daemon package) so the CLI version matches the running daemon.
-  systemd.services.mullvad-autoconnect-disable = {
-    description = "Disable Mullvad auto-connect on boot";
-    after = [ "mullvad-daemon.service" ];
-    wants = [ "mullvad-daemon.service" ];
+  # Route all traffic through Mullvad exit node via Tailscale on boot.
+  # --exit-node-allow-lan-access keeps NAS reachable while VPN is active.
+  systemd.services.tailscale-exit-node = {
+    description = "Set Tailscale Mullvad exit node";
+    after = [ "tailscaled.service" "network-online.target" ];
+    wants = [ "tailscaled.service" "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       Type = "oneshot";
-      # Wait up to 10s for the daemon socket, then run the command.
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${pkgs.mullvad}/bin/mullvad status >/dev/null 2>&1 && break; sleep 2; done'";
-      ExecStart = "${pkgs.mullvad}/bin/mullvad auto-connect set off";
-      RemainAfterExit = true;
-    };
-  };
-
-  # Allow LAN traffic to bypass the VPN tunnel (required for NAS when VPN is active)
-  systemd.services.mullvad-lan-allow = {
-    description = "Allow LAN access through Mullvad VPN";
-    after = [ "mullvad-daemon.service" ];
-    wants = [ "mullvad-daemon.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'for i in 1 2 3 4 5; do ${pkgs.mullvad}/bin/mullvad status >/dev/null 2>&1 && break; sleep 2; done'";
-      ExecStart = "${pkgs.mullvad}/bin/mullvad lan set allow";
+      ExecStart = "${pkgs.tailscale}/bin/tailscale set --exit-node=us-nyc-wg-301.mullvad.ts.net --exit-node-allow-lan-access=true";
       RemainAfterExit = true;
     };
   };

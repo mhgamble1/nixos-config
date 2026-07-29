@@ -22,6 +22,4 @@
     };
   };
 
-  # ── Mullvad VPN ───────────────────────────────────────────────────────
-  services.mullvad-vpn.enable = true;
 }

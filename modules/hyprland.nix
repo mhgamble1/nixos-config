@@ -395,7 +395,7 @@ in
       };
 
       "custom/vpn" = {
-        exec = "mullvad status 2>/dev/null | grep -q 'Connected' && echo '{\"text\":\"VPN\",\"class\":\"connected\"}' || echo '{\"text\":\"NO VPN\",\"class\":\"disconnected\"}'";
+        exec = "tailscale exit-node list 2>/dev/null | grep -q 'selected' && echo '{\"text\":\"VPN\",\"class\":\"connected\"}' || echo '{\"text\":\"NO VPN\",\"class\":\"disconnected\"}'";
         return-type = "json";
         interval = 5;
         tooltip = false;
