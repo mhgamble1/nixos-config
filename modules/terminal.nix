@@ -119,7 +119,7 @@
       window-padding-x = 10;
       window-padding-y = 8;
       # Hyprland draws its own borders; GNOME needs decorations for resize/move
-      window-decoration = osConfig.networking.hostName == "desktop";
+      window-decoration = osConfig.networking.hostName != "desktop";
 
       # Tab bar
       gtk-tabs-location = "bottom";
