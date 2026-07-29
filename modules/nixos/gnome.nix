@@ -12,13 +12,14 @@
   };
 
   # ── Display manager — GDM ─────────────────────────────────────────────
-  services.displayManager.gdm = {
-    enable = true;
-    wayland = true;
-  };
+  services.displayManager.gdm.enable = true;
 
   # ── GNOME desktop ─────────────────────────────────────────────────────
   services.desktopManager.gnome.enable = true;
+
+  # GNOME enables power-profiles-daemon by default; disable it so TLP
+  # (configured in the laptop host) can manage power without conflict.
+  services.power-profiles-daemon.enable = false;
 
   # Remove apps we don't use (have better alternatives installed)
   environment.gnome.excludePackages = with pkgs; [
