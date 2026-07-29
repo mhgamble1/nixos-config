@@ -7,6 +7,12 @@
   ];
 
   dconf.settings = {
+    # Touchpad — GNOME overrides libinput so must be set here too
+    "org/gnome/desktop/peripherals/touchpad" = {
+      natural-scroll = false;
+      tap-to-click = true;
+    };
+
     "org/gnome/shell" = {
       enabled-extensions = [ "Vitals@CoreCoding.com" ];
     };
