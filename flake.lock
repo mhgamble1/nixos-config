@@ -132,7 +132,8 @@
       "inputs": {
         "home-manager": "home-manager",
         "llm-agents-nix": "llm-agents-nix",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_2",
+        "zen-browser": "zen-browser"
       }
     },
     "systems": {
@@ -168,6 +169,26 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786164819,
+        "narHash": "sha256-tvBlGAYyzHYdLwn035bRCrB1mcMjvNNavcNZ293AIIA=",
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
+        "rev": "f9af5f7017cea1c159e17922288fb38ff94d28cd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
         "type": "github"
       }
     }

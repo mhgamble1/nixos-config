@@ -19,7 +19,7 @@
   nix.distributedBuilds = true;
   nix.buildMachines = [
     {
-      hostName = "desktop.tail25cfe0.ts.net";
+      hostName = secrets.desktop.hostname;
       system = "x86_64-linux";
       protocol = "ssh-ng";
       sshUser = "mhg";

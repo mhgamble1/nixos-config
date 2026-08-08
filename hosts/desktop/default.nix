@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, secrets, zen-browser, ... }:
 
 {
   imports = [
@@ -67,6 +67,7 @@
   # ── Desktop-only packages ─────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
     rclone
+    zen-browser.packages.${stdenv.hostPlatform.system}.default
   ];
 
   system.stateVersion = "25.11";

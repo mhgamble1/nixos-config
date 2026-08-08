@@ -8,9 +8,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents-nix.url = "github:numtide/llm-agents.nix";
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, ... }:
+  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -31,7 +35,7 @@
         # Desktop — AMD CPU, NVIDIA GPU, daily driver
         # nixos-rebuild switch --flake /etc/nixos#desktop
         desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets; };
+          specialArgs = { inherit secrets zen-browser; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/desktop
