@@ -29,3 +29,24 @@ Caused by: No such file or directory (os error 2)
 **Fix:** Add `services.displayManager.defaultSession = "hyprland"` to `modules/nixos/desktop.nix` to pin SDDM to the plain `hyprland.desktop` session regardless of what the session list contains.
 
 **Prevention:** Any nixpkgs bump can add new session `.desktop` files to SDDM. Without a pinned default, SDDM may auto-select an unsupported session. Set `defaultSession` explicitly and only change it when the target session has been validated end-to-end.
+
+---
+
+## 2026-08-08 — No internet on laptop whenever Tailscale is up (dead Mullvad exit node)
+
+**Symptom:** With Tailscale running, the laptop has no internet and no LAN. Bringing Tailscale down restores both. `tailscale status` reports the tailnet as healthy and the selected exit node as `Online: true`, giving no indication of a fault.
+
+**Root cause:** The laptop's exit node was pinned to the Mullvad relay `us-nyc-wg-301` (`100.82.221.88` / `143.244.47.65`), which had stopped completing WireGuard handshakes. `tailscale status --json` showed the tell:
+
+```
+TxBytes:       4680                      # handshake initiations going out
+RxBytes:       0                         # nothing ever coming back
+LastHandshake: 0001-01-01T00:00:00Z      # zero value — tunnel never established
+Online:        true                      # control plane still advertised it
+```
+
+The relay answered ICMP normally (20ms, 0% loss), so the host was up and routable — it simply was not serving WireGuard. Because an exit node's `AllowedIPs` are `0.0.0.0/0` and `::/0`, every packet was routed into a tunnel that never came up. `ExitNodeAllowLANAccess` was also `false` on this host (the desktop sets it `true`), so the LAN went dark alongside the internet.
+
+**Fix:** `sudo tailscale set --exit-node=` to clear the pin, then `sudo tailscale up`. The laptop now runs with no exit node by default — the machine does no torrenting (that lives on the VPS), and routing it through Mullvad slows `cache.nixos.org` substituter fetches on an already-slow NIC. Enable an exit node situationally for untrusted wifi. The desktop keeps its declarative pin in `hosts/desktop/default.nix`.
+
+**Prevention:** `Online: true` is the coordination server saying a node is *registered*, not that the data path works — it does not verify the tunnel. To confirm an exit node is actually carrying traffic, check `LastHandshake` (must be a real recent timestamp, not the `0001-01-01` zero value) and `RxBytes` (must be non-zero) via `tailscale status --json`. Mullvad relays are decommissioned and rotated without notice, so any hard-pinned relay hostname is a latent outage. When pinning one, pair it with `--exit-node-allow-lan-access=true` so a dead relay does not also cost you LAN and SSH access to local hosts.
