@@ -16,7 +16,8 @@
   networking.hostName = "laptop";
 
   # ── Distributed builds — offload to desktop via Tailscale ─────────────
-  nix.distributedBuilds = true;
+  # Disabled: desktop is no longer available as a build machine.
+  nix.distributedBuilds = false;
   nix.buildMachines = [
     {
       hostName = secrets.desktop.hostname;
