@@ -41,16 +41,21 @@
     ];
   };
 
-  # Route all traffic through Mullvad exit node via Tailscale on boot.
+  # Route all traffic through a Mullvad exit node via Tailscale on boot.
+  # Uses `tailscale exit-node suggest` rather than a hardcoded relay
+  # hostname — Mullvad relays are decommissioned/rotated without notice,
+  # so a pinned hostname is a latent outage (see INCIDENTS.md, 2026-08-08).
   # --exit-node-allow-lan-access keeps NAS reachable while VPN is active.
   systemd.services.tailscale-exit-node = {
     description = "Set Tailscale Mullvad exit node";
     after = [ "tailscaled.service" "network-online.target" ];
     wants = [ "tailscaled.service" "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.tailscale ];
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.tailscale}/bin/tailscale set --exit-node=us-nyc-wg-301.mullvad.ts.net --exit-node-allow-lan-access=true";
+      # tailscale-exit-node-set is installed system-wide by networking.nix.
+      ExecStart = "/run/current-system/sw/bin/tailscale-exit-node-set";
       RemainAfterExit = true;
     };
   };
