@@ -5,7 +5,7 @@
     ../../hardware-configuration.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/networking.nix
-    ../../modules/nixos/desktop.nix
+    ../../modules/nixos/hyprland-session.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
     ../../modules/nixos/hardware/nvidia.nix
@@ -26,7 +26,7 @@
 
   # ── NAS — Samba automount ──────────────────────────────────────────────
   fileSystems."/mnt/nas" = {
-    device = "//${secrets.nas.ip}/nas";
+    device = "//${secrets.nas.ip}/shared";
     fsType = "cifs";
     options = [
       "credentials=/etc/nixos/smb-credentials"

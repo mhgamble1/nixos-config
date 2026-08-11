@@ -1,5 +1,8 @@
 { config, pkgs, lib, osConfig, ... }:
 
+# Home-manager Hyprland config — keybinds, window rules, startup apps.
+# Used by: desktop (imported conditionally in home/mhg/default.nix on
+# hostName == "desktop"). Pair with modules/nixos/hyprland-session.nix.
 let
   # Startup profile: launch these apps onto fixed workspaces so the session
   # comes up in a predictable layout after login.

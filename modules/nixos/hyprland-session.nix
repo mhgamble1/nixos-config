@@ -1,5 +1,7 @@
 { pkgs, ... }:
 
+# System-level Hyprland session — greetd/tuigreet + Hyprland compositor.
+# Used by: desktop.
 {
   # ── X11 / Wayland base ────────────────────────────────────────────────
   # Required for display manager, XWayland, and nvidia driver config.

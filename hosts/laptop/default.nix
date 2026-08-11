@@ -33,7 +33,7 @@
 
   # ── NAS — Samba automount ──────────────────────────────────────────────
   fileSystems."/mnt/nas" = {
-    device = "//${secrets.nas.ip}/nas";
+    device = "//${secrets.nas.ip}/shared";
     fsType = "cifs";
     options = [
       "credentials=/etc/nixos/smb-credentials"

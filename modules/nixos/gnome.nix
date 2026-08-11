@@ -1,5 +1,7 @@
 { pkgs, ... }:
 
+# System-level GNOME Shell session — GDM + services.desktopManager.gnome.
+# Used by: laptop. Pair with home/../gnome-home.nix for dconf/extensions.
 {
   # ── X11 base — needed for keymap and xwayland ─────────────────────────
   services.xserver.enable = true;
