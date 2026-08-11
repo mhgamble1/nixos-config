@@ -134,11 +134,15 @@
     bun
     pnpm
 
+    zed-editor
+
     sqlite
     litecli
 
     bubblewrap
 
     gh
+
+    sox
   ];
 }
