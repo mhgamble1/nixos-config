@@ -78,14 +78,6 @@ This file is the source of truth. Update it whenever binds change.
 | `SUPER+scroll` | Cycle workspaces |
 | `SUPER+SHIFT+B` | Re-run the standard app/workspace bootstrap |
 
-### Scratchpad (Hermes)
-| Binding | Action |
-|---------|--------|
-| `` SUPER+` `` | Toggle Hermes scratchpad (spawns SSH session on first use) |
-| `` SUPER+SHIFT+` `` | Move focused window into the Hermes scratchpad |
-
-Hermes is a special floating workspace (`special:hermes`). First press spawns a Ghostty window → fish → `hermes` alias (SSH + tmux on the VPS). Subsequent presses show/hide it.
-
 ### Media & System
 | Binding | Action |
 |---------|--------|

@@ -25,14 +25,6 @@
         User = "git";
         IdentityFile = "~/.ssh/id_ed25519";
       };
-      # Hermes VPS — AI agent / remote workspace
-      "hermes" = {
-        Hostname = secrets.hermes.hostname;
-        User = secrets.hermes.user;
-        IdentityFile = "~/.ssh/id_ed25519";
-        ServerAliveInterval = 60;
-        ServerAliveCountMax = 10;
-      };
       # exe.dev gateway
       "exe.dev" = {
         User = "mhg";
