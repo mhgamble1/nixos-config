@@ -44,13 +44,26 @@
           ];
         };
 
-        # Laptop — Dell XPS (scaffold, not yet provisioned)
-        # Add hosts/laptop/hardware-configuration.nix before deploying
+        # Laptop — Intel, GNOME, daily-carry laptop
+        # nixos-rebuild switch --flake /etc/nixos#laptop
         laptop = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit secrets; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/laptop
+            home-manager.nixosModules.home-manager
+            hmConfig
+          ];
+        };
+
+        # T14 — ThinkPad T14 gen2, Intel i7-1165G7 (scaffold, not yet provisioned)
+        # Add hosts/t14/hardware-configuration.nix before deploying
+        # nixos-rebuild switch --flake /etc/nixos#t14
+        t14 = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit secrets; };
+          modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            ./hosts/t14
             home-manager.nixosModules.home-manager
             hmConfig
           ];
