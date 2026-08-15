@@ -8,7 +8,7 @@
     ../../modules/agents.nix
     ../../modules/theming.nix
   ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix
-    ++ lib.optional (osConfig.networking.hostName == "laptop") ../../modules/gnome-home.nix;
+    ++ lib.optional (builtins.elem osConfig.networking.hostName [ "laptop" "t14" ]) ../../modules/gnome-home.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
@@ -91,13 +91,6 @@
 
   # ── XDG ───────────────────────────────────────────────────────────────
   xdg.enable = true;
-
-  # ── GTK / GNOME — dark mode for libadwaita apps (e.g. high-tide) ─────
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
-    };
-  };
 
   # ── Session variables ─────────────────────────────────────────────────
   home.sessionVariables = {

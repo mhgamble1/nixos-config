@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 # Home-manager GNOME config — extensions, dconf settings, GUI tools.
-# Used by: laptop (imported conditionally in home/mhg/default.nix on
-# hostName == "laptop"). Pair with modules/nixos/gnome.nix for the session.
+# Used by: laptop, t14 (imported conditionally in home/mhg/default.nix by
+# hostName). Pair with modules/nixos/gnome.nix for the session.
 {
   # ── GNOME Shell extensions ────────────────────────────────────────────
   home.packages = with pkgs; [
@@ -24,6 +24,16 @@
         "Vitals@CoreCoding.com"
         "dash-to-dock@micxgx.gmail.com"
       ];
+    };
+
+    # Titlebar buttons — stock GNOME ships close-only; add minimize/maximize.
+    # Fixed workspace count instead of GNOME's default dynamic grow/shrink.
+    "org/gnome/desktop/wm/preferences" = {
+      button-layout = "appmenu:minimize,maximize,close";
+      num-workspaces = 4;
+    };
+    "org/gnome/mutter" = {
+      dynamic-workspaces = false;
     };
 
     # Dash to Dock — captured from live settings via Extensions app GUI
