@@ -42,6 +42,16 @@
         ControlPath = "~/.ssh/cm-%r@%h:%p";
         ControlPersist = "10m";
       };
+      # home Pi, reachable over Tailscale
+      "piserver" = {
+        User = "pi";
+        IdentityFile = "~/.ssh/id_ed25519";
+      };
+      # dev VPS, reachable over Tailscale
+      "mam-vps" = {
+        User = "mhg";
+        IdentityFile = "~/.ssh/id_ed25519";
+      };
     };
   };
 
