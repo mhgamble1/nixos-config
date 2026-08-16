@@ -144,8 +144,5 @@
     gh
 
     sox
-
-    taskwarrior3
-    taskwarrior-tui
   ];
 }
