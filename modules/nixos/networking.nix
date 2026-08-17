@@ -21,9 +21,13 @@
 
   # ── SSH ───────────────────────────────────────────────────────────────
   # PasswordAuthentication and root login are disabled.
-  # Firewall access is via tailscale0 (trustedInterfaces above).
-  # To restrict sshd to the Tailscale interface only, set:
+  # NOTE: services.openssh.openFirewall defaults to true, which opens port
+  # 22 globally (all interfaces), not just tailscale0 — trustedInterfaces
+  # only affects interfaces listed in it, it doesn't scope other ports'
+  # allowlists down to it. So SSH is reachable on the LAN too, key-auth
+  # only. To restrict sshd to the Tailscale interface only, set:
   #   services.openssh.settings.ListenAddress = "<tailscale-ip>";
+  #   services.openssh.openFirewall = false;
   services.openssh = {
     enable = true;
     settings = {
