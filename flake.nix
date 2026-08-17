@@ -73,6 +73,18 @@
           ];
         };
 
+        # xps-server — Dell XPS 13 9360, headless Home Assistant box.
+        # No home-manager: this is a dedicated single-purpose server, not
+        # a desktop, so mhg's personal app/dotfile config doesn't apply.
+        # nixos-rebuild switch --flake /etc/nixos#xps-server
+        xps-server = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit secrets; };
+          modules = [
+            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            ./hosts/xps-server
+          ];
+        };
+
       };
     };
 }
