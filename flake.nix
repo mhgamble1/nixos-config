@@ -12,9 +12,13 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hiresti = {
+      url = "github:yelanxin/hiresTI";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, ... }:
+  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, hiresti, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -25,7 +29,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix; };
+        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix hiresti; };
         home-manager.users.mhg = import ./home/mhg;
       };
     in

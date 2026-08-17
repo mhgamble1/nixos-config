@@ -148,9 +148,5 @@
 
     # Media processing
     ffmpeg
-
-    # TIDAL music player
-    high-tide
-
   ];
 }
