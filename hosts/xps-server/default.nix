@@ -83,12 +83,11 @@
       WorkingDirectory = "/etc/affine";
       ExecStartPre = pkgs.writeShellScript "affine-render-env" ''
         set -eu
-        TAILSCALE_IP=$(tailscale ip -4)
         {
           echo "AFFINE_REVISION=stable"
           echo "PORT=3010"
-          echo "TAILSCALE_IP=$TAILSCALE_IP"
-          echo "AFFINE_SERVER_HOST=$TAILSCALE_IP"
+          echo "AFFINE_SERVER_HTTPS=true"
+          echo "AFFINE_SERVER_EXTERNAL_URL=https://xps-server.tail25cfe0.ts.net"
           echo "DB_DATA_LOCATION=/var/lib/affine/postgres"
           echo "UPLOAD_LOCATION=/var/lib/affine/storage"
           echo "CONFIG_LOCATION=/var/lib/affine/config"
@@ -98,6 +97,7 @@
         } > /etc/affine/.env
       '';
       ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f /etc/affine/docker-compose.yml up -d --remove-orphans";
+      ExecStartPost = "${pkgs.tailscale}/bin/tailscale serve --bg --https=443 http://127.0.0.1:3010";
       ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f /etc/affine/docker-compose.yml down";
     };
   };

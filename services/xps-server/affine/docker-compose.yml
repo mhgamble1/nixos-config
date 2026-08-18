@@ -1,10 +1,14 @@
 # Self-hosted AFFiNE for xps-server. Adapted from the official compose file
 # (github.com/toeverything/AFFiNE releases/v0.27.3/docker-compose.yml):
-#   - the app port is bound to the Tailscale interface's IP only, not
-#     0.0.0.0, so it's reachable over the tailnet and never on the LAN or
-#     publicly — no NixOS firewall rule needed, since Docker's DNAT rule is
-#     scoped by destination IP at the iptables level regardless of the host
-#     firewall (same class of bypass documented for the mam-stack Pi).
+#   - the app port is bound to loopback only (127.0.0.1), never 0.0.0.0 —
+#     no NixOS firewall rule needed, since Docker's DNAT rule is scoped by
+#     destination IP at the iptables level regardless of the host firewall
+#     (same class of bypass documented for the mam-stack Pi). The real
+#     boundary is `tailscale serve`, which terminates real HTTPS
+#     (xps-server.tail25cfe0.ts.net, cert via Tailscale's own Let's
+#     Encrypt integration) and proxies to this loopback port — tools like
+#     affine-mcp-server that refuse plain HTTP to non-loopback hosts work
+#     against it without needing AFFINE_ALLOW_INSECURE_HTTP.
 #   - mem_limit added on every container: this host has 4GB total RAM
 #     shared with Home Assistant, so unbounded containers risk swapping the
 #     whole box under memory pressure rather than just this stack.
@@ -14,7 +18,7 @@ services:
     image: ghcr.io/toeverything/affine:${AFFINE_REVISION:-stable}
     container_name: affine_server
     ports:
-      - '${TAILSCALE_IP}:${PORT:-3010}:3010'
+      - '127.0.0.1:${PORT:-3010}:3010'
     mem_limit: 1536m
     depends_on:
       redis:
