@@ -1,4 +1,10 @@
-# Backlog
+# Backlog — moved to Linear (2026-08-19)
+
+The 4 real action items below were imported into Linear (team "Mace-splurge",
+label `nixos`, no dedicated Project — see mam-stack's CLAUDE.md for why) as
+MAC-51 through MAC-54. This file's content is left in place as reference/
+history (the reasoning is more detailed here than it is in Linear), but new
+tracking/triage happens in Linear, not by editing this list.
 
 Deferred ideas and follow-ups — not yet scheduled. Revisit when picking up new work.
 
