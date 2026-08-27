@@ -26,6 +26,16 @@
       ];
     };
 
+    # Idle-triggered suspend is handled by logind (IdleAction, in
+    # hosts/t14/power-management.nix) so it goes through suspend-then-
+    # hibernate like lid/power-key do. GNOME's own idle-suspend calls
+    # Suspend() directly and bypasses that, so it's turned off here to
+    # avoid two authorities disagreeing about how idle-suspend behaves.
+    "org/gnome/settings-daemon/plugins/power" = {
+      sleep-inactive-ac-type = "nothing";
+      sleep-inactive-battery-type = "nothing";
+    };
+
     # Titlebar buttons — stock GNOME ships close-only; add minimize/maximize.
     # Fixed workspace count instead of GNOME's default dynamic grow/shrink.
     "org/gnome/desktop/wm/preferences" = {

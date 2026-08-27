@@ -50,6 +50,18 @@
     HandleLidSwitchDocked = "ignore";
     HandlePowerKey = "suspend-then-hibernate";
     HandleSuspendKey = "suspend-then-hibernate";
+
+    # GNOME's own idle timeout (org.gnome.settings-daemon.plugins.power
+    # sleep-inactive-*-type) calls login1.Manager.Suspend() directly — a
+    # different path than lid/power-key, and one that does NOT go through
+    # suspend-then-hibernate. Left alone, walking away for 15 min (GNOME's
+    # default idle timeout) drops the machine into plain s2idle suspend
+    # indefinitely, with no hibernate fallback — the exact fragile state
+    # that caused the original hang. IdleAction here gives logind sole
+    # authority over idle-triggered suspend so it's covered the same way;
+    # GNOME's own idle-suspend is disabled to match (see gnome-home.nix).
+    IdleAction = "suspend-then-hibernate";
+    IdleActionSec = "15min";
   };
 
   systemd.sleep.settings.Sleep.HibernateDelaySec = "2h";
