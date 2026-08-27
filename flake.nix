@@ -12,9 +12,14 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, ... }:
+  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, plasma-manager, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -27,6 +32,7 @@
         home-manager.useUserPackages = true;
         home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix; };
         home-manager.users.mhg = import ./home/mhg;
+        home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
       };
     in
     {
