@@ -8,7 +8,7 @@
     ../../modules/agents.nix
     ../../modules/theming.nix
   ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix
-    ++ lib.optional (builtins.elem osConfig.networking.hostName [ "laptop" "t14" ]) ../../modules/gnome-home.nix;
+    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/gnome-home.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
@@ -114,7 +114,7 @@
     htop
     unzip
 
-    google-chrome
+    google-chrome # Claude-in-Chrome requires real Chrome; Firefox stays default browser
 
     calibre
 

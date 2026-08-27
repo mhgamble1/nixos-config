@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 # Home-manager GNOME config — extensions, dconf settings, GUI tools.
-# Used by: laptop, t14 (imported conditionally in home/mhg/default.nix by
+# Used by: t14 (imported conditionally in home/mhg/default.nix by
 # hostName). Pair with modules/nixos/gnome.nix for the session.
 {
   # ── GNOME Shell extensions ────────────────────────────────────────────
