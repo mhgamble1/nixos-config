@@ -2,7 +2,7 @@
 # Pick a currently-healthy Mullvad exit node via Tailscale's own suggestion
 # picker and set it, instead of a hardcoded relay hostname. Mullvad relays
 # are decommissioned/rotated without notice, so a pinned hostname is a
-# latent outage (see INCIDENTS.md, 2026-08-08). Run as root (or via sudo).
+# latent outage. Run as root (or via sudo).
 set -euo pipefail
 
 node=$(tailscale exit-node suggest | sed -n 's/^Suggested exit node: \(.*\)\.$/\1/p')

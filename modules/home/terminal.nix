@@ -132,69 +132,6 @@
     };
   };
 
-  # ── tmux ──────────────────────────────────────────────────────────────
-  programs.tmux = {
-    enable = true;
-    baseIndex = 1; # Windows start at 1, not 0
-    historyLimit = 10000;
-    mouse = true;
-    terminal = "tmux-256color";
-
-    extraConfig = ''
-      # True color support
-      set -ag terminal-overrides ",xterm-256color:RGB"
-
-      # Pane indexing
-      setw -g pane-base-index 1
-
-      # Vim-style pane navigation
-      bind h select-pane -L
-      bind j select-pane -D
-      bind k select-pane -U
-      bind l select-pane -R
-
-      # Resize panes with vim keys (repeatable)
-      bind -r H resize-pane -L 5
-      bind -r J resize-pane -D 5
-      bind -r K resize-pane -U 5
-      bind -r L resize-pane -R 5
-
-      # Split panes with more intuitive keys
-      bind | split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
-      unbind '"'
-      unbind %
-
-      # New window in current path
-      bind c new-window -c "#{pane_current_path}"
-
-      # Reload config
-      bind r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
-
-      # Quick pane cycling
-      bind -n M-o select-pane -t :.+
-
-      # Status bar (minimal, Tokyo Night colors) — hidden by default
-      # To show temporarily: tmux set status on
-      set -g status off
-      set -g status-style bg='#1a1b26',fg='#c0caf5'
-      set -g status-left-length 30
-      set -g status-left '#[fg=#7aa2f7,bold] #S '
-      set -g status-right '#[fg=#565f89] %Y-%m-%d %H:%M '
-      set -g window-status-format '#[fg=#565f89] #I:#W '
-      set -g window-status-current-format '#[fg=#7aa2f7,bold] #I:#W '
-      set -g pane-border-style fg='#414868'
-      set -g pane-active-border-style fg='#7aa2f7'
-      set -g message-style bg='#24283b',fg='#c0caf5'
-
-      # No delay on escape
-      set -sg escape-time 0
-
-      # Longer status messages
-      set -g display-time 2000
-    '';
-  };
-
   # ── Fish shell ────────────────────────────────────────────────────────
   programs.fish = {
     enable = true;
@@ -227,15 +164,6 @@
       # zoxide: use 'z' to jump, 'zi' for interactive
       # (zoxide is initialized via programs.zoxide.enableFishIntegration)
 
-      # Git shortcuts
-      g = "git";
-      gs = "git status";
-      ga = "git add";
-      gc = "git commit";
-      gp = "git push";
-      gl = "git log --oneline --graph --decorate";
-      gd = "git diff";
-
       # Modern utils
       cat = "bat";
       diff = "difft"; # structural diff
@@ -243,12 +171,6 @@
       df = "duf"; # readable disk free
       ps = "procs"; # readable process list
       top = "btm"; # bottom system monitor
-
-      # NixOS
-      ne = "hx /etc/nixos/hosts/desktop/default.nix";
-      nfl = "hx /etc/nixos/flake.nix";
-      nhm = "hx /etc/nixos/home/mhg/default.nix";
-
     };
 
     functions = {
@@ -264,61 +186,10 @@
         description = "NixOS rebuild boot for current host";
         body = "sudo nixos-rebuild boot --flake /etc/nixos#(hostname) --impure $argv";
       };
-
-      # View the system cheatsheet in a pager
-      cht = {
-        description = "View the system cheatsheet";
-        body = "bat --paging=always ~/cheatsheet.md";
+      nrbu = {
+        description = "NixOS rebuild boot with flake update for current host";
+        body = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild boot --flake /etc/nixos#(hostname) --impure $argv";
       };
-
-      # Download a clip's audio as a high-quality MP3.
-      # Usage: ytclip <start> <end> <url>
-      ytclip = {
-        description = "Download audio from a video clip as MP3";
-        body = ''
-          if test (count $argv) -ne 3
-            echo "Usage: ytclip <start> <end> <url>"
-            echo "Example: ytclip 00:30 01:10 https://youtube.com/watch?v=..."
-            return 1
-          end
-
-          set start $argv[1]
-          set end $argv[2]
-          set url $argv[3]
-
-          yt-dlp -x --audio-format mp3 --audio-quality 0 \
-            --download-sections "*$start-$end" \
-            -o "%(title)s.%(ext)s" \
-            "$url"
-        '';
-      };
-
-      # Connect to an exe.dev VM directly, with keepalives, ControlMaster, and
-      # tmux session persistence. Usage: exe <hostname-or-ip>
-      # Reconnecting after a drop reattaches the same session — state is preserved.
-      exe = {
-        description = "Connect to an exe.dev VM with tmux session persistence";
-        body = ''
-          if test (count $argv) -ne 1
-            echo "Usage: exe <name>"
-            return 1
-          end
-          # Auto-append .exe.xyz if no dot in arg (i.e. short name like "spin-sun")
-          if string match -qr '\.' $argv[1]
-            set host $argv[1]
-          else
-            set host "$argv[1].exe.xyz"
-          end
-          ssh -t \
-            -o ServerAliveInterval=30 \
-            -o ServerAliveCountMax=6 \
-            -o ControlMaster=auto \
-            -o ControlPath=%d/.ssh/cm-%r@%h:%p \
-            -o ControlPersist=10m \
-            "$host" "[ -f ~/.tmux.conf ] || { echo 'set -g default-terminal xterm-256color'; echo 'set -g status off'; } > ~/.tmux.conf; tmux new-session -d -s main 2>/dev/null; tmux source-file ~/.tmux.conf 2>/dev/null; tmux set -t main status off; tmux attach-session -t main"
-        '';
-      };
-
     };
   };
 
@@ -343,7 +214,6 @@
         "$git_branch"
         "$git_status"
         "$cmd_duration"
-        "\${custom.pomo}"
         "$line_break"
         "$character"
       ];

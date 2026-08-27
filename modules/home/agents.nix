@@ -1,12 +1,7 @@
-{ pkgs, llm-agents-nix, ... }:
+{ pkgs, ... }:
 
-let
-  agents = llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system};
-in
 {
-  home.packages = with agents; [
+  home.packages = with pkgs; [
     claude-code
   ];
-
-  home.file.".claude/CLAUDE.md".source = ../../home/mhg/claude/CLAUDE.md;
 }

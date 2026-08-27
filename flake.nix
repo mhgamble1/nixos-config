@@ -7,11 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    llm-agents-nix.url = "github:numtide/llm-agents.nix";
-    zen-browser = {
-      url = "github:youwen5/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,7 +14,7 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, plasma-manager, ... }:
+  outputs = { nixpkgs, home-manager, plasma-manager, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -30,7 +25,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix; };
+        home-manager.extraSpecialArgs = { inherit secrets; };
         home-manager.users.mhg = import ./home/mhg;
         home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
       };
@@ -45,7 +40,7 @@
         # for good, delete this block the same way `laptop` was retired.
         # nixos-rebuild switch --flake /etc/nixos#desktop
         desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets zen-browser; };
+          specialArgs = { inherit secrets; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/desktop

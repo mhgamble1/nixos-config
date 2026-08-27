@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, zen-browser, ... }:
+{ config, pkgs, secrets, ... }:
 
 {
   imports = [
@@ -9,7 +9,6 @@
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
     ../../modules/nixos/nvidia.nix
-    ../../modules/nixos/audiobookshelf.nix
   ];
 
   networking.hostName = "desktop";
@@ -44,7 +43,7 @@
   # Route all traffic through a Mullvad exit node via Tailscale on boot.
   # Uses `tailscale exit-node suggest` rather than a hardcoded relay
   # hostname — Mullvad relays are decommissioned/rotated without notice,
-  # so a pinned hostname is a latent outage (see INCIDENTS.md, 2026-08-08).
+  # so a pinned hostname is a latent outage.
   # --exit-node-allow-lan-access keeps NAS reachable while VPN is active.
   systemd.services.tailscale-exit-node = {
     description = "Set Tailscale Mullvad exit node";
@@ -72,7 +71,6 @@
   # ── Desktop-only packages ─────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
     rclone
-    zen-browser.packages.${stdenv.hostPlatform.system}.default
   ];
 
   system.stateVersion = "25.11";

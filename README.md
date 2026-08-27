@@ -1,74 +1,6 @@
 # nixos-config
 
-NixOS system configuration for a Wayland/Hyprland workstation. Flake-based, git-tracked, Home Manager integrated as a NixOS module.
-
----
-
-## Hardware
-
-- NVIDIA GPU (proprietary drivers, Wayland via GBM)
-- Boot: GRUB → NVMe SSD
-- Keyboard: Glove80 with Tailorkey 4.2m (bilateral homerow mods)
-
----
-
-## Structure
-
-```
-/etc/nixos/
-├── flake.nix                          # Entry point — nixpkgs pin, hosts, HM module
-├── flake.lock                         # Auto-generated — pins nixos-unstable
-├── secrets.nix                        # Passwords/credentials — gitignored, loaded via --impure
-├── smb-credentials                    # NAS mount credentials — not committed
-├── hardware-configuration.nix         # Auto-generated — do not hand-edit
-├── hosts/
-│   ├── desktop/default.nix            # Desktop: boot, NAS, ollama-cuda, imports shared modules
-│   └── laptop/default.nix             # Laptop: scaffold (future Dell XPS)
-├── modules/
-│   ├── nixos/                         # System-level NixOS modules
-│   │   ├── base.nix                   # Locale, timezone, nix settings, nix-ld, allowUnfree
-│   │   ├── networking.nix             # NetworkManager, tailscale, mullvad, openssh
-│   │   ├── desktop.nix                # xserver, SDDM, Hyprland, pipewire, printing, Firefox
-│   │   ├── services.nix               # Flatpak, bluetooth
-│   │   ├── users.nix                  # users.users.mhg, fonts
-│   │   └── hardware/nvidia.nix        # NVIDIA drivers, modesetting, graphics
-│   ├── hyprland.nix                   # Hyprland WM, Waybar, fuzzel, mako, keybinds
-│   ├── terminal.nix                   # Ghostty, tmux, fish, starship, bat, fzf, zoxide
-│   ├── dev.nix                        # Helix, Zed, Go, Python/uv, Nix LSP, SQLite
-│   ├── music.nix                      # LMMS, SunVox, Audacity
-│   ├── agents.nix                     # AI agents: Claude Code, Codex, Gemini CLI, Crush, OpenCode
-│   └── theming.nix                    # GTK/Qt dark theme (adw-gtk3-dark, Tokyo Night)
-├── home/mhg/
-│   ├── default.nix                    # Home Manager root: git, SSH, yazi, per-user packages
-│   └── cheatsheet.md                  # Quick reference (rendered to ~/cheatsheet.md)
-└── scripts/
-    └── pomo.py                        # Pomodoro timer
-```
-
----
-
-## Key applications
-
-| Role          | Tool           | Notes                                            |
-|---------------|----------------|--------------------------------------------------|
-| WM            | Hyprland       | Wayland compositor, NVIDIA-tuned, dwindle layout |
-| Bar           | Waybar         | Top bar: workspaces, clock, CPU/MEM/NET/VOL      |
-| Launcher      | fuzzel         | App launcher (`SUPER+D`)                         |
-| Notifications | mako           | Desktop notifications                            |
-| Terminal      | Ghostty        | GPU-accelerated, Tokyo Night theme               |
-| Shell         | fish           | Vi keybindings, starship prompt                  |
-| Multiplexer   | tmux           | SSH/remote only — not auto-started locally       |
-| Editor        | Helix          | Modal, LSP, Tokyo Night theme                    |
-| File manager  | yazi           | TUI, opens floating via `SUPER+E`                |
-| Music         | spotify_player | TUI Spotify client, opens floating via `SUPER+M` |
-| Music prod    | LMMS           | DAW                                              |
-| Music prod    | SunVox         | Modular tracker/DAW                              |
-| Audio         | Audacity       | Audio editor                                     |
-| Notes         | Obsidian       | Markdown knowledge base                          |
-| Editor (GUI)  | Zed            | GUI editor, forced XWayland (NVIDIA workaround)  |
-| Browser       | Firefox        |                                                  |
-| VPN           | Mullvad        | Daemon enabled; auto-connect **disabled** (use manually to avoid Tailscale conflicts) |
-| NAS           | Samba/CIFS     | Automounts `/mnt/nas` on access                  |
+NixOS system configuration. Flake-based, git-tracked, Home Manager integrated as a NixOS module.
 
 ---
 
@@ -86,36 +18,7 @@ sudo nixos-rebuild switch --rollback
 
 > `--impure` is required because `secrets.nix` is gitignored.
 
-### Edit configs quickly
-
-```bash
-# Open key files directly:
-hx /etc/nixos/hosts/desktop/default.nix   # boot, NAS, ollama
-hx /etc/nixos/home/mhg/default.nix        # home manager root
-hx /etc/nixos/modules/hyprland.nix        # keybinds, window rules
-hx /etc/nixos/modules/terminal.nix        # shell, aliases
-```
-
-### Commit and push changes
-
-```bash
-cd /etc/nixos
-gs           # git status
-ga -p        # git add --patch (stage selectively)
-gc -m "..."  # git commit
-gp           # git push (via SSH)
-```
-
 ---
-
-## Remote sync / bootstrap
-
-This repo is primarily **pushed from one machine**. The remote is a backup and bootstrap source.
-
-| Scenario | What to do |
-|---|---|
-| **New machine / fresh NixOS install** | Clone repo, copy `hardware-configuration.nix`, run `nixos-rebuild switch --flake /etc/nixos --impure` |
-| **Reinstall on the same machine** | Same as above — the remote is your restore point |
 
 ### Bootstrap on a new machine
 
@@ -156,13 +59,7 @@ ssh -T git@github.com       # verify
 
 ## Claude Code
 
-Claude Code is installed as a Home Manager package via `llm-agents-nix` (see `modules/agents.nix`). The `claude` binary is available directly on `$PATH` — no alias required.
-
----
-
-## Troubleshooting
-
-See [`INCIDENTS.md`](INCIDENTS.md) for a log of past incidents, root causes, and resolutions.
+Claude Code is installed as a Home Manager package from nixpkgs (see `modules/home/agents.nix`). The `claude` binary is available directly on `$PATH` — no alias required.
 
 ---
 
@@ -180,23 +77,7 @@ sudo nix-store --optimise
 
 ## Roadmap
 
-### Near-term
-
-- [ ] **Unpin nixpkgs** — pinned to `4c1018d` (2026-04-09) because Electron 41.2.0 + kernel 6.18.22 break Spotify (and likely Zed/other Electron apps) on NVIDIA Wayland. Before unpinning, check that `electron` in the new nixpkgs has moved past 41.2.x with a fix, or that a NVIDIA/Wayland workaround has landed. See `INCIDENTS.md` and `flake.nix` comment.
-- [ ] **BIOS/UEFI audit** — review firmware settings: ensure UEFI secure boot posture is understood, check for firmware updates, consider migrating boot loader from GRUB (BIOS-mode) to systemd-boot (UEFI) if supported by the hardware.
 - [ ] **Commit signing** — `commit.gpgsign = true` once SSH signing key is confirmed
 - [ ] **ccache wiring** — `programs.ccache.enable = true` is set but `packageNames` is not configured; nothing actually routes through ccache yet. Identify packages worth caching (CUDA-heavy builds, anything compiled locally) and add them.
-- [x] **Hostname** — renamed from `nixos` to `desktop` in `flake.nix` and `hosts/desktop/default.nix`
-- [x] **Laptop host** — Dell XPS provisioned and running
 - [ ] **YubiKey FIDO2 SSH key** — replace software key with hardware-backed key
-
-### Medium-term
-
-- [ ] **UWSM migration** — `hyprland-uwsm.desktop` is now available in SDDM but `programs.hyprland.withUWSM` is pinned to `false` (default). UWSM is the direction Hyprland is moving toward — it runs the compositor inside a proper systemd user session graph, which improves crash isolation and lifecycle management. When ready, enable `withUWSM = true`, validate NVIDIA env var propagation and session bootstrap behaviour, and switch `defaultSession` to `"hyprland-uwsm"`. See `INCIDENTS.md` 2026-04-18 for the failure mode to avoid.
 - [ ] **Secrets management** — `agenix` or `sops-nix` for NAS credentials and API keys; would eliminate the `--impure` flag requirement
-
-### Long-term
-
-- [ ] **NAS integration** — Jellyfin or similar media server, desktop as thin client
-- [ ] **Raspberry Pi NAS** — NixOS on the Pi, managed from this repo
-- [ ] **Home Assistant** — home automation on NAS or dedicated Pi

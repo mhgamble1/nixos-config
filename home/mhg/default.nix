@@ -25,23 +25,6 @@
         User = "git";
         IdentityFile = "~/.ssh/id_ed25519";
       };
-      # exe.dev gateway
-      "exe.dev" = {
-        User = "mhg";
-        IdentityFile = "~/.ssh/id_ed25519";
-        ServerAliveInterval = 60;
-        ServerAliveCountMax = 3;
-      };
-      # exe.dev VMs — direct SSH with keepalives and connection multiplexing
-      "*.exe.xyz" = {
-        User = "exedev";
-        IdentityFile = "~/.ssh/id_ed25519";
-        ServerAliveInterval = 30;
-        ServerAliveCountMax = 6;
-        ControlMaster = "auto";
-        ControlPath = "~/.ssh/cm-%r@%h:%p";
-        ControlPersist = "10m";
-      };
       # home Pi, reachable over Tailscale
       "piserver" = {
         User = "pi";
@@ -115,8 +98,6 @@
     unzip
 
     google-chrome # Claude-in-Chrome requires real Chrome; Firefox stays default browser
-
-    calibre
 
     tealdeer
 
