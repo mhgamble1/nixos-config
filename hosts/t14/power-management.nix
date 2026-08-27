@@ -36,11 +36,19 @@
   # long the system spends in the fragile s2idle state and gives a real
   # "fully off" fallback if s2idle misbehaves again — hibernation from a
   # power-off state doesn't depend on s2idle at all.
+  #
+  # HandlePowerKey matches GNOME's own power-button-action ('suspend') so
+  # the button behaves the same whether or not a GNOME session is active —
+  # GNOME's gsd-media-keys grabs the power/suspend/hibernate keys ahead of
+  # logind whenever a desktop session is running, so logind's setting here
+  # only actually fires at the GDM login screen or from a bare console.
+  # Keeping the two in sync means there's no case where the same button
+  # does two different things depending on what's running.
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend-then-hibernate";
     HandleLidSwitchExternalPower = "suspend-then-hibernate";
     HandleLidSwitchDocked = "ignore";
-    HandlePowerKey = "poweroff";
+    HandlePowerKey = "suspend-then-hibernate";
     HandleSuspendKey = "suspend-then-hibernate";
   };
 
