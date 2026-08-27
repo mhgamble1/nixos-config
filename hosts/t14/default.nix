@@ -46,8 +46,8 @@
   # Backlight control
   environment.systemPackages = [ pkgs.brightnessctl ];
 
-  # Temporary: lets `fwupdmgr` talk to the fwupd daemon to check for/apply a
-  # BIOS/EC firmware update. Remove after the update is done.
+  # Lets `fwupdmgr` talk to the fwupd daemon to check for/apply BIOS/EC
+  # firmware updates.
   services.fwupd.enable = true;
 
   system.stateVersion = "25.11";
