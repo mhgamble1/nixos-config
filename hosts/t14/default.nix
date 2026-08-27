@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/networking.nix
-    ../../modules/nixos/gnome.nix
+    ../../modules/nixos/kde.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/peripherals.nix
     ../../modules/nixos/users.nix

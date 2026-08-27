@@ -37,13 +37,14 @@
   # "fully off" fallback if s2idle misbehaves again — hibernation from a
   # power-off state doesn't depend on s2idle at all.
   #
-  # HandlePowerKey matches GNOME's own power-button-action ('suspend') so
-  # the button behaves the same whether or not a GNOME session is active —
-  # GNOME's gsd-media-keys grabs the power/suspend/hibernate keys ahead of
-  # logind whenever a desktop session is running, so logind's setting here
-  # only actually fires at the GDM login screen or from a bare console.
-  # Keeping the two in sync means there's no case where the same button
-  # does two different things depending on what's running.
+  # HandlePowerKey matches the desktop session's own power-button action
+  # so the button behaves the same whether or not a session is active —
+  # the DE's own daemon (previously GNOME's gsd-media-keys, now KDE's
+  # Powerdevil) grabs the power/suspend/hibernate keys ahead of logind
+  # whenever a desktop session is running, so logind's setting here only
+  # actually fires at the login screen or from a bare console. Keeping
+  # the two in sync means there's no case where the same button does two
+  # different things depending on what's running.
   services.logind.settings.Login = {
     HandleLidSwitch = "suspend-then-hibernate";
     HandleLidSwitchExternalPower = "suspend-then-hibernate";
@@ -51,15 +52,16 @@
     HandlePowerKey = "suspend-then-hibernate";
     HandleSuspendKey = "suspend-then-hibernate";
 
-    # GNOME's own idle timeout (org.gnome.settings-daemon.plugins.power
-    # sleep-inactive-*-type) calls login1.Manager.Suspend() directly — a
-    # different path than lid/power-key, and one that does NOT go through
-    # suspend-then-hibernate. Left alone, walking away for 15 min (GNOME's
-    # default idle timeout) drops the machine into plain s2idle suspend
+    # The desktop environment's own idle timeout calls login1.Manager.
+    # Suspend() directly — a different path than lid/power-key, and one
+    # that does NOT go through suspend-then-hibernate. Left alone, walking
+    # away for the idle timeout drops the machine into plain s2idle suspend
     # indefinitely, with no hibernate fallback — the exact fragile state
     # that caused the original hang. IdleAction here gives logind sole
     # authority over idle-triggered suspend so it's covered the same way;
-    # GNOME's own idle-suspend is disabled to match (see gnome-home.nix).
+    # the DE's own idle-suspend is disabled to match (previously GNOME's
+    # settings-daemon; now KDE Powerdevil's energy-saving idle action — see
+    # kde-home.nix).
     IdleAction = "suspend-then-hibernate";
     IdleActionSec = "15min";
   };
