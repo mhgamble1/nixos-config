@@ -28,6 +28,15 @@
         home-manager.extraSpecialArgs = { inherit secrets; };
         home-manager.users.mhg = import ./home/mhg;
         home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
+        # KDE's own subsystems (kde-gtk-config, font management, etc.) write
+        # directly into paths home-manager also manages, the moment you touch
+        # the relevant System Settings page — turning a home-manager-owned
+        # symlink into a plain file underneath it. Without this, the next
+        # activation fails outright on "would be clobbered" for whichever
+        # file KDE touched last, one at a time. Auto-backing up instead of
+        # failing is the documented remedy for exactly this NixOS-module
+        # situation (see the home-manager-mhg.service error text).
+        home-manager.backupFileExtension = "hm-bak";
       };
     in
     {
