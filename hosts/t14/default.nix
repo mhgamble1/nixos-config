@@ -13,6 +13,7 @@
     ../../modules/nixos/gnome.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
+    ./power-management.nix
   ];
 
   networking.hostName = "t14";
