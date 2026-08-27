@@ -44,9 +44,7 @@
     HandleSuspendKey = "suspend-then-hibernate";
   };
 
-  systemd.sleep.extraConfig = ''
-    HibernateDelaySec=2h
-  '';
+  systemd.sleep.settings.Sleep.HibernateDelaySec = "2h";
 
   # ── Hibernate resume target ─────────────────────────────────────────────
   # Swap partition is 34GB against 31GB RAM — enough headroom for a
