@@ -54,10 +54,6 @@
 
     languages = {
       language-server = {
-        zk = {
-          command = "zk";
-          args = [ "lsp" ];
-        };
         gopls = {
           command = "gopls";
         };
@@ -77,7 +73,6 @@
       language = [
         {
           name = "markdown";
-          language-servers = [ "zk" ];
           soft-wrap.enable = true;
         }
         {
@@ -137,7 +132,6 @@
     zed-editor
 
     sqlite
-    litecli
 
     bubblewrap
 

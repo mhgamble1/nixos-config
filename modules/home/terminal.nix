@@ -56,8 +56,6 @@
     # TUI git client
     lazygit
 
-    khal
-
     jujutsu
   ];
 

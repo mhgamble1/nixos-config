@@ -2,13 +2,13 @@
 
 {
   imports = [
-    ../../hardware-configuration.nix
+    ./hardware-configuration.nix
     ../../modules/nixos/base.nix
     ../../modules/nixos/networking.nix
     ../../modules/nixos/hyprland-session.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/users.nix
-    ../../modules/nixos/hardware/nvidia.nix
+    ../../modules/nixos/nvidia.nix
     ../../modules/nixos/audiobookshelf.nix
   ];
 

@@ -8,5 +8,5 @@ in
     claude-code
   ];
 
-  home.file.".claude/CLAUDE.md".source = ../home/mhg/claude/CLAUDE.md;
+  home.file.".claude/CLAUDE.md".source = ../../home/mhg/claude/CLAUDE.md;
 }

@@ -12,13 +12,9 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hiresti = {
-      url = "github:yelanxin/hiresTI";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, hiresti, ... }:
+  outputs = { nixpkgs, home-manager, llm-agents-nix, zen-browser, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -29,7 +25,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix hiresti; };
+        home-manager.extraSpecialArgs = { inherit secrets llm-agents-nix; };
         home-manager.users.mhg = import ./home/mhg;
       };
     in
@@ -37,6 +33,10 @@
       nixosConfigurations = {
 
         # Desktop — AMD CPU, NVIDIA GPU, daily driver
+        # STATUS: dormant since t14 became primary daily driver (2026-08) —
+        # hardware kept powered off but not decommissioned. Config is left
+        # buildable for a future revival; if the hardware is ever recycled
+        # for good, delete this block the same way `laptop` was retired.
         # nixos-rebuild switch --flake /etc/nixos#desktop
         desktop = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit secrets zen-browser; };

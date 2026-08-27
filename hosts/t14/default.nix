@@ -12,6 +12,7 @@
     ../../modules/nixos/networking.nix
     ../../modules/nixos/gnome.nix
     ../../modules/nixos/services.nix
+    ../../modules/nixos/peripherals.nix
     ../../modules/nixos/users.nix
     ./power-management.nix
   ];

@@ -1,18 +1,10 @@
 { pkgs, ... }:
 
 # System-level Hyprland session — greetd/tuigreet + Hyprland compositor.
-# Used by: desktop.
+# Used by: desktop. Pair with desktop-session-common.nix for the shared
+# X11/audio/printing/Firefox baseline.
 {
-  # ── X11 / Wayland base ────────────────────────────────────────────────
-  # Required for display manager, XWayland, and nvidia driver config.
-  services.xserver.enable = true;
-  services.xserver.excludePackages = [ pkgs.xterm ];
-
-  # ── Keymap ────────────────────────────────────────────────────────────
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  imports = [ ./desktop-session-common.nix ];
 
   # ── Display manager — greetd with tuigreet ───────────────────────────
   # greetd launches Hyprland directly as the PAM session command, so PAM
@@ -48,30 +40,13 @@
     default = [ "com.mitchellh.ghostty.desktop" ];
   };
 
-  # ── Audio — PipeWire ──────────────────────────────────────────────────
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
   # Realtime scheduling for audio apps (PipeWire, etc.)
   security.pam.loginLimits = [
     { domain = "@audio"; item = "rtprio";  type = "-"; value = "95"; }
     { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
   ];
 
-  # ── Printing ──────────────────────────────────────────────────────────
-  services.printing.enable = true;
-
   # ── Secret Service — required by apps using libsecret (e.g. high-tide) ──
   services.gnome.gnome-keyring.enable = true;
   security.pam.services.greetd.enableGnomeKeyring = true;
-
-  # ── Firefox ───────────────────────────────────────────────────────────
-  programs.firefox.enable = true;
 }

@@ -1,17 +1,10 @@
 { pkgs, ... }:
 
 # System-level GNOME Shell session — GDM + services.desktopManager.gnome.
-# Used by: t14. Pair with home/../gnome-home.nix for dconf/extensions.
+# Used by: t14. Pair with modules/home/gnome-home.nix for dconf/extensions, and
+# desktop-session-common.nix for the shared X11/audio/printing/Firefox baseline.
 {
-  # ── X11 base — needed for keymap and xwayland ─────────────────────────
-  services.xserver.enable = true;
-  services.xserver.excludePackages = [ pkgs.xterm ];
-
-  # ── Keymap ────────────────────────────────────────────────────────────
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  imports = [ ./desktop-session-common.nix ];
 
   # ── Display manager — GDM ─────────────────────────────────────────────
   services.displayManager.gdm.enable = true;
@@ -33,20 +26,4 @@
     gnome-music       # music player (using spotify_player)
   ];
 
-  # ── Audio — PipeWire ──────────────────────────────────────────────────
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
-
-  # ── Printing ──────────────────────────────────────────────────────────
-  services.printing.enable = true;
-
-  # ── Firefox ───────────────────────────────────────────────────────────
-  programs.firefox.enable = true;
 }

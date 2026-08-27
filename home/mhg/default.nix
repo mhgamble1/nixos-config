@@ -2,13 +2,13 @@
 
 {
   imports = [
-    ../../modules/music.nix
-    ../../modules/terminal.nix
-    ../../modules/dev.nix
-    ../../modules/agents.nix
-    ../../modules/theming.nix
-  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/hyprland.nix
-    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/gnome-home.nix;
+    ../../modules/home/music.nix
+    ../../modules/home/terminal.nix
+    ../../modules/home/dev.nix
+    ../../modules/home/agents.nix
+    ../../modules/home/theming.nix
+  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
+    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/gnome-home.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
@@ -118,22 +118,15 @@
 
     calibre
 
-    newsboat
-
     tealdeer
 
     # Discord
     discord
 
-    # Note-taking
-    zk
-    obsidian
-
     # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
     xdg-terminal-exec
 
     zola
-    wrangler
 
     # Media / docs
     vlc
@@ -141,10 +134,7 @@
     # Downloads
     aria2
     yt-dlp
-    openbooks
     nicotine-plus
-
-    circumflex
 
     # Media processing
     ffmpeg
