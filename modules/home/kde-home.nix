@@ -87,6 +87,16 @@
             iconTasks = { };
           }
           {
+            # An explicit panel `widgets` list fully replaces Plasma's default
+            # panel layout — the System Tray isn't implicit, it's just another
+            # widget. Without it there's nowhere for popups (including the
+            # Notifications applet) to live: confirmed live on t14, KDE's own
+            # Settings > Notifications page reported "Could not find a
+            # 'Notifications' widget" and a mouse-disconnect notification got
+            # stuck on screen with no way to dismiss it.
+            systemTray = { };
+          }
+          {
             systemMonitor = {
               title = "System Monitor";
               totalSensors = [
@@ -135,13 +145,63 @@
         whenLaptopLidClosed = "doNothing";
         powerButtonAction = "sleep";
         whenSleepingEnter = "standbyThenHibernate";
+
+        # Default KDE display timeouts are tuned for a shared/office
+        # laptop (dim/blank within a couple minutes) — annoying for a
+        # machine that's almost always home and unattended-but-nearby.
+        # Push these out so the screen stays lit through short pauses.
+        dimDisplay.idleTimeout = 900; # 15 min
+        turnOffDisplay.idleTimeout = 1200; # 20 min
       };
       battery = {
         autoSuspend.action = "nothing";
         whenLaptopLidClosed = "doNothing";
         powerButtonAction = "sleep";
         whenSleepingEnter = "standbyThenHibernate";
+
+        dimDisplay.idleTimeout = 900;
+        turnOffDisplay.idleTimeout = 1200;
       };
+    };
+
+    # ── Notifications ────────────────────────────────────────────────────
+    # No single "disable all notifications" switch exists in Plasma's
+    # config — ShowPopups is a per-application default (true) rather than
+    # a global one. The mechanism Plasma's own "Do Not Disturb" toggle uses
+    # for "until manually turned back on" is just setting this timestamp
+    # far in the future (confirmed from plasma-workspace's
+    # applets/notifications/FullRepresentation.qml, which literally does
+    # `date + 1 year` rather than track a separate "permanent" flag) — so
+    # this reproduces that "permanently on" DND state declaratively.
+    # Critical notifications, screen-sharing/mirroring alerts still get
+    # through by default (Plasma's own DND carve-outs); toggle it off
+    # early (moon icon in the system tray) if you want popups back
+    # sooner than 2099.
+    #
+    # NOTE on format: this is NOT ISO 8601. KConfig serializes QDateTime as
+    # "Year,Month,Day,Hour,Minute,Second.Millisecond" — confirmed live by
+    # manually toggling DND via the tray icon and diffing the resulting
+    # file (it wrote "2027,8,28,9,2,41.514"). An ISO-formatted string here
+    # silently fails to parse as a valid QDateTime, so the DND state never
+    # actually activates despite looking like a normal config value.
+    configFile.plasmanotifyrc."DoNotDisturb".Until = "2099,1,1,0,0,0.000";
+
+    # ── Screen lock ──────────────────────────────────────────────────────
+    # Same "mostly home, not a shared machine" reasoning as the powerdevil
+    # display timeouts above. First attempt was a grace-period delay before
+    # requiring a password after locking — but any real interruption (not
+    # just a few seconds away) blows past a several-minute grace window
+    # anyway, so it never stopped feeling like a full re-login. Settled on
+    # the actually-sane version for a home-only machine instead: still
+    # blank/lock the screen on schedule (so it's not left lit and visible),
+    # but drop the password requirement entirely — moving the mouse or a
+    # keypress unlocks it instantly. This means zero access-control barrier
+    # once someone has physical access to the machine; that's the accepted
+    # trade-off here specifically because the machine is home-only.
+    kscreenlocker = {
+      autoLock = true;
+      timeout = 20; # minutes idle before lock
+      passwordRequired = false; # unlock is instant — no password ever
     };
   };
 }
