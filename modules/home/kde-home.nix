@@ -17,10 +17,37 @@
   # even though KDE may re-clobber it again live in between switches.
   gtk.gtk2.force = true;
 
+  # MacTahoe theme (github.com/vinceliuice/MacTahoe-kde), packaged locally
+  # since it's not in nixpkgs — see pkgs/mactahoe-kde-theme and
+  # pkgs/mactahoe-icon-theme (built the same way nixpkgs packages the
+  # sibling whitesur-kde/whitesur-icon-theme). Ships as $out/share/...
+  # (color-schemes, plasma/{desktoptheme,look-and-feel}, Kvantum, aurorae,
+  # icons), so having it in home.packages is enough for KDE to find it on
+  # XDG_DATA_DIRS — nothing gets written outside the Nix store.
+  home.packages = [
+    (pkgs.callPackage ../../pkgs/mactahoe-kde-theme { })
+    (pkgs.callPackage ../../pkgs/mactahoe-icon-theme { })
+    pkgs.kdePackages.qtstyleplugin-kvantum
+  ];
+
   programs.plasma = {
     enable = true;
 
-    workspace.colorScheme = "BreezeDark";
+    # Applying the look-and-feel package (rather than setting colorScheme,
+    # iconTheme, and cursor separately, which replaces the previous
+    # colorScheme = "BreezeDark") cascades all of it in one go, per its
+    # contents/defaults: ColorScheme=MacTahoeDark, Icons.Theme=MacTahoe-
+    # dark, cursorTheme=MacTahoe-dark, the aurorae window decoration, and
+    # KDE.widgetStyle=kvantum-dark. plasma-manager's own docs warn against
+    # setting lookAndFeel alongside colorScheme/windowDecorations for
+    # exactly this reason — the look-and-feel theme overrides them anyway.
+    workspace.lookAndFeel = "com.github.vinceliuice.MacTahoe-Dark";
+
+    # widgetStyle=kvantum-dark (set above by the look-and-feel package)
+    # only selects the *engine* — Kvantum still needs to be told which of
+    # its own themes to render. That's a separate config file the
+    # look-and-feel package doesn't touch, so it's set explicitly here.
+    configFile."Kvantum/kvantum.kvconfig"."General".theme = "MacTahoeDark";
 
     # Fixed workspace count, single row — a horizontal strip like macOS
     # Spaces, not GNOME's default vertical stack. Matches the fixed
