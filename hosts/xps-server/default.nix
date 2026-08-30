@@ -46,6 +46,10 @@
   # Intel integrated graphics driver only — no display server runs on top.
   hardware.graphics.enable = true;
 
+  # ── Docker — for self-hosted addons (AIOStreams, AIOMetadata, etc.) ────
+  virtualisation.docker.enable = true;
+  users.users.mhg.extraGroups = [ "docker" ];
+
   # ── Passwordless sudo, scoped to this host only ────────────────────────
   # Reachable over Tailscale only, single-user homelab box — not a daily
   # driver, so the usual password-on-sudo protection buys little here vs.
