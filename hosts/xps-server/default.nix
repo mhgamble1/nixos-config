@@ -2,10 +2,13 @@
 
 # ── xps-server ───────────────────────────────────────────────────────────
 # Dell XPS 13 9360, i3-7100U, 4GB RAM. Repurposed from the old `laptop`
-# daily-carry role (superseded by t14) into a dedicated, headless
-# Home Assistant box. WiFi-only for now — add a USB-Ethernet adapter only
-# if WiFi proves unreliable in practice. SSH is reachable over Tailscale
-# only (see networking.nix); no LAN firewall exception is opened.
+# daily-carry role (superseded by t14) into a headless box running Home
+# Assistant plus self-hosted Stremio addons (AIOStreams, etc.) for the
+# household's LAN-local Chromecast. WiFi-only for now — add a USB-Ethernet
+# adapter only if WiFi proves unreliable in practice. SSH stays Tailscale
+# -only (see networking.nix); the addon UIs are the only LAN-facing ports
+# (see `networking.firewall.allowedTCPPorts` below), reachable via mDNS as
+# `xps-server.local` since this box has no static LAN IP.
 
 {
   imports = [
@@ -49,6 +52,18 @@
   # ── Docker — for self-hosted addons (AIOStreams, AIOMetadata, etc.) ────
   virtualisation.docker.enable = true;
   users.users.mhg.extraGroups = [ "docker" ];
+
+  # ── mDNS — stable LAN name (xps-server.local) despite DHCP, and LAN
+  # access to self-hosted addon UIs ─────────────────────────────────────
+  services.avahi = {
+    enable = true;
+    openFirewall = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
+  networking.firewall.allowedTCPPorts = [ 3000 ]; # aiostreams
 
   # ── Passwordless sudo, scoped to this host only ────────────────────────
   # Reachable over Tailscale only, single-user homelab box — not a daily
