@@ -45,6 +45,24 @@ stdenvNoCC.mkDerivation rec {
     runHook preInstall
     ./install.sh --dest $out/share/icons --name MacTahoe --theme blue
     jdupes --link-soft --recurse $out/share
+
+    # install_cursors_scalable ignores --theme and always drops the cursor set
+    # under the untinted "MacTahoe[-dark|-light]" names, leaving those dirs
+    # with no index.theme or icon set of their own -- only "MacTahoe-blue-*"
+    # got real icons. mactahoe-kde-theme's look-and-feel defaults hardcode
+    # "MacTahoe-dark" as both Icons.Theme and cursorTheme (the name upstream's
+    # own default -- non-blue -- install would have produced with icons and
+    # cursors merged into one directory), so fold the cursor files into the
+    # real (blue) icon theme under that name and alias it there instead of
+    # leaving two half-populated theme directories plasma-apply-lookandfeel
+    # can't resolve.
+    for variant in dark light; do
+      cp -r $out/share/icons/MacTahoe-$variant/cursors $out/share/icons/MacTahoe-blue-$variant/cursors
+      cp -r $out/share/icons/MacTahoe-$variant/cursors_scalable $out/share/icons/MacTahoe-blue-$variant/cursors_scalable
+      rm -rf $out/share/icons/MacTahoe-$variant
+      ln -s MacTahoe-blue-$variant $out/share/icons/MacTahoe-$variant
+    done
+
     runHook postInstall
   '';
 

@@ -105,22 +105,48 @@
       }
     ];
 
+    # Two panels instead of one, splitting the same widgets the way macOS
+    # splits Dock from menu bar — matching the MacTahoe-kde upstream repo's
+    # own documented "MacOS Dock" / "MacOS Panel" settings (panel_settings.jpg
+    # in vinceliuice/MacTahoe-kde), which aren't applied by install.sh or
+    # plasma-apply-lookandfeel and have to be set up by hand (or here,
+    # declaratively) — see pkgs/mactahoe-kde-theme and modules/home/kde-home.nix
+    # git history for that investigation.
     panels = [
       {
+        # Dock: bottom, floating, centered, only as wide as its icons.
         location = "bottom";
-        hiding = "autohide";
+        alignment = "center";
+        lengthMode = "fit";
+        hiding = "dodgewindows";
+        opacity = "translucent";
+        floating = true;
+        height = 68;
         widgets = [
           {
             iconTasks = { };
           }
+        ];
+      }
+      {
+        # Menu bar: top, full width, opaque, always visible. Holds the
+        # System Tray and system-monitor widget the single bottom panel used
+        # to carry — an explicit panel `widgets` list fully replaces
+        # Plasma's default panel layout, and the System Tray isn't implicit,
+        # it's just another widget. Without it there's nowhere for popups
+        # (including the Notifications applet) to live: confirmed live on
+        # t14, KDE's own Settings > Notifications page reported "Could not
+        # find a 'Notifications' widget" and a mouse-disconnect notification
+        # got stuck on screen with no way to dismiss it.
+        location = "top";
+        alignment = "center";
+        lengthMode = "fill";
+        hiding = "none";
+        opacity = "opaque";
+        floating = true;
+        height = 40;
+        widgets = [
           {
-            # An explicit panel `widgets` list fully replaces Plasma's default
-            # panel layout — the System Tray isn't implicit, it's just another
-            # widget. Without it there's nowhere for popups (including the
-            # Notifications applet) to live: confirmed live on t14, KDE's own
-            # Settings > Notifications page reported "Could not find a
-            # 'Notifications' widget" and a mouse-disconnect notification got
-            # stuck on screen with no way to dismiss it.
             systemTray = { };
           }
           {
