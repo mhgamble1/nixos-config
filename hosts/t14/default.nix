@@ -41,6 +41,22 @@
     settings = {
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+      # Charge threshold: this machine is plugged in most of the time
+      # (home-only, see kde-home.nix), so calendar aging at high
+      # state-of-charge — not cycle count — is the dominant wear factor.
+      # Capping below 100% avoids that; 90 stop / 85 start (rather than
+      # a single value) gives a 5-point hysteresis band so TLP isn't
+      # toggling charging on/off right at the ceiling.
+      #
+      # NOTE: nothing was actually enforcing a threshold before this —
+      # `upower -i` was reporting a stale charge-start/end-threshold of
+      # 75/80%, but live sysfs (charge_control_start/end_threshold under
+      # /sys/class/power_supply/BAT0) read 0/100 (unrestricted). That
+      # upower value was leftover from something outside this repo, not
+      # a fact of the current config.
+      START_CHARGE_THRESH_BAT0 = 85;
+      STOP_CHARGE_THRESH_BAT0 = 90;
     };
   };
 

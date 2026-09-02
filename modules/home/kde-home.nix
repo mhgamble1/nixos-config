@@ -193,9 +193,22 @@
     # it goes through the same suspend-then-hibernate behavior instead of
     # plain s2idle.
     powerdevil = {
+      # whenLaptopLidClosed is "sleep", not "doNothing": Powerdevil always
+      # holds a systemd-logind `block`-type inhibitor on handle-lid-switch
+      # (confirmed live via `systemd-inhibit --list`), which suppresses
+      # logind's own HandleLidSwitch action entirely rather than just
+      # racing it — so "doNothing" here previously meant lid-close did
+      # *nothing at all*, not "defer to logind". Verified by an 11h21m
+      # gap in the journal (2026-09-01 21:12 lid-close to 2026-09-02
+      # 08:33 lid-open) with zero suspend/resume log entries — the
+      # machine sat fully awake all night and drained the battery. Since
+      # Powerdevil is unavoidably the real lid-switch owner, it has to be
+      # the one that suspends; whenSleepingEnter = standbyThenHibernate
+      # routes that through the same suspend-then-hibernate behavior
+      # logind would have used.
       AC = {
         autoSuspend.action = "nothing";
-        whenLaptopLidClosed = "doNothing";
+        whenLaptopLidClosed = "sleep";
         powerButtonAction = "sleep";
         whenSleepingEnter = "standbyThenHibernate";
 
@@ -208,7 +221,7 @@
       };
       battery = {
         autoSuspend.action = "nothing";
-        whenLaptopLidClosed = "doNothing";
+        whenLaptopLidClosed = "sleep";
         powerButtonAction = "sleep";
         whenSleepingEnter = "standbyThenHibernate";
 
