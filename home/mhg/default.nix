@@ -77,8 +77,8 @@
 
   # ── Session variables ─────────────────────────────────────────────────
   home.sessionVariables = {
-    EDITOR = "hx";
-    VISUAL = "hx";
+    EDITOR = "zeditor --wait";
+    VISUAL = "zeditor --wait";
     TERMINAL = "ghostty";
     BROWSER = "firefox";
     NIXOS_OZONE_WL = "1";
