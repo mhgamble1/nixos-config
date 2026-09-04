@@ -31,6 +31,8 @@
 
     zed-editor
 
+    ansible
+
     sqlite
 
     bubblewrap
