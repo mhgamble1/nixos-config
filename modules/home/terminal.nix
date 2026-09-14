@@ -6,6 +6,9 @@
     # ls → eza
     eza
 
+    # typescript exercises
+    exercism
+
     # find → fd  (already in home.nix)
     # grep → ripgrep  (already in home.nix)
 
