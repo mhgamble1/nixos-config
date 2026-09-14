@@ -28,7 +28,7 @@
 
     bun
     pnpm
-    yarn
+    yarn-berry
 
     zed-editor
 
