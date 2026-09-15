@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, secrets, flakeModules, ... }:
 
 # ── xps-server ───────────────────────────────────────────────────────────
 # Dell XPS 13 9360, i3-7100U, 4GB RAM. Repurposed from the old `laptop`
@@ -13,9 +13,9 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/base.nix
-    ../../modules/nixos/networking.nix
-    ../../modules/nixos/users.nix
+    flakeModules.nixos.base
+    flakeModules.nixos.networking
+    flakeModules.nixos.users
     ../../modules/nixos/home-assistant.nix
   ];
 

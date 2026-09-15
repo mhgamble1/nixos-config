@@ -77,7 +77,7 @@
         # for good, delete this block the same way `laptop` was retired.
         # nixos-rebuild switch --flake /etc/nixos#desktop
         desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets; };
+          specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/desktop
@@ -89,7 +89,7 @@
         # T14 — ThinkPad T14 gen2, Intel i7-1165G7, primary daily driver
         # nixos-rebuild switch --flake /etc/nixos#t14
         t14 = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets; };
+          specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/t14
@@ -104,7 +104,7 @@
         # a desktop, so mhg's personal app/dotfile config doesn't apply.
         # nixos-rebuild switch --flake /etc/nixos#xps-server
         xps-server = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets; };
+          specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/xps-server

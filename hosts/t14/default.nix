@@ -1,4 +1,4 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, secrets, flakeModules, ... }:
 
 # ── ThinkPad T14 gen2 configuration ─────────────────────────────────────
 # i7-1165G7, Intel Iris Xe (no NVIDIA). Provisioned fresh 2026-08 —
@@ -8,13 +8,13 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/base.nix
-    ../../modules/nixos/networking.nix
+    flakeModules.nixos.base
+    flakeModules.nixos.networking
+    flakeModules.nixos.users
     ../../modules/nixos/kde.nix
     ../../modules/nixos/niri-session.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/peripherals.nix
-    ../../modules/nixos/users.nix
     ./power-management.nix
   ];
 

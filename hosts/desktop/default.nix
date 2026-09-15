@@ -1,13 +1,13 @@
-{ config, pkgs, secrets, ... }:
+{ config, pkgs, secrets, flakeModules, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ../../modules/nixos/base.nix
-    ../../modules/nixos/networking.nix
+    flakeModules.nixos.base
+    flakeModules.nixos.networking
+    flakeModules.nixos.users
     ../../modules/nixos/hyprland-session.nix
     ../../modules/nixos/services.nix
-    ../../modules/nixos/users.nix
     ../../modules/nixos/nvidia.nix
   ];
 
