@@ -1,4 +1,4 @@
-{ config, pkgs, lib, osConfig, ... }:
+{ config, pkgs, ... }:
 
 {
   # GTK dark theme — adw-gtk3-dark makes GTK3 apps look like modern GTK4 Adwaita
@@ -25,19 +25,28 @@
     };
   };
 
-  # Qt apps (e.g. anything built on Qt) — GNOME has no native Qt platform
-  # integration, so this was needed there. KDE ships its own
+  # Qt apps (e.g. anything built on Qt) — niri has no native Qt platform
+  # integration, so this is needed there. KDE ships its own
   # (plasma-integration, the "kde" platform theme) and additionally
-  # expects widgetStyle/Kvantum to control styling via kdeglobals —
-  # forcing QT_QPA_PLATFORMTHEME=adwaita / QT_STYLE_OVERRIDE=adwaita-dark
-  # here would override that for every Qt app, confirmed live in the
-  # generated environment.d config. Skip it on t14.
-  qt = lib.mkIf (osConfig.networking.hostName != "t14") {
-    enable = true;
-    platformTheme.name = "adwaita";
-    style = {
-      name = "adwaita-dark";
-      package = pkgs.adwaita-qt;
-    };
-  };
+  # expects widgetStyle/Kvantum to control styling via kdeglobals, so it
+  # must stay untouched under KDE.
+  #
+  # t14 offers both KDE and niri as SDDM session choices — which one is
+  # active is a runtime login pick, not something home-manager can see at
+  # build/activation time. home-manager's `qt.enable` can't be scoped to
+  # "niri only" for that reason: it writes QT_QPA_PLATFORMTHEME /
+  # QT_STYLE_OVERRIDE into ~/.profile and systemd --user's environment.d,
+  # both of which apply to the whole user account regardless of which
+  # session was picked — confirmed live previously (that's why this used
+  # to be disabled for all of t14, back when t14 was KDE-only). The one
+  # mechanism here that's genuinely session-scoped is niri's own
+  # `environment` setting (modules/home/niri.nix) — niri only injects those
+  # vars into processes *it* spawns, never into a KDE session. So: just
+  # install the theme packages here, and set the actual
+  # QT_QPA_PLATFORMTHEME / QT_STYLE_OVERRIDE env vars over in niri.nix.
+  home.packages = with pkgs; [
+    adwaita-qt
+    qadwaitadecorations
+    qadwaitadecorations-qt6
+  ];
 }
