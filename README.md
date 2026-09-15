@@ -59,7 +59,7 @@ ssh -T git@github.com       # verify
 
 ## Claude Code
 
-Claude Code is installed as a Home Manager package from nixpkgs (see `modules/home/agents.nix`). The `claude` binary is available directly on `$PATH` — no alias required.
+Claude Code is installed as a Home Manager package from nixpkgs (see `features/agents.nix`). The `claude` binary is available directly on `$PATH` — no alias required.
 
 ---
 

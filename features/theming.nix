@@ -41,7 +41,7 @@
     # session was picked — confirmed live previously (that's why this used
     # to be disabled for all of t14, back when t14 was KDE-only). The one
     # mechanism here that's genuinely session-scoped is niri's own
-    # `environment` setting (modules/home/niri.nix) — niri only injects those
+    # `environment` setting (features/niri.nix) — niri only injects those
     # vars into processes *it* spawns, never into a KDE session. So: just
     # install the theme packages here, and set the actual
     # QT_QPA_PLATFORMTHEME / QT_STYLE_OVERRIDE env vars over in niri.nix.
