@@ -14,7 +14,7 @@
     flakeModules.nixos.services
     flakeModules.nixos.peripherals
     flakeModules.nixos.niri
-    ../../modules/nixos/kde.nix
+    flakeModules.nixos.kde
     ./power-management.nix
   ];
 

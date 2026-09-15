@@ -2,7 +2,7 @@
 
 {
   imports = lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
-    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/kde-home.nix
+    ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.kde
     ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri;
 
   home.username = "mhg";
