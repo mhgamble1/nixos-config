@@ -16,7 +16,7 @@
     flakeModules.nixos.base
     flakeModules.nixos.networking
     flakeModules.nixos.users
-    ../../modules/nixos/home-assistant.nix
+    flakeModules.nixos.home-assistant
   ];
 
   networking.hostName = "xps-server";

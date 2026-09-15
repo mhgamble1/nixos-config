@@ -6,9 +6,9 @@
     flakeModules.nixos.base
     flakeModules.nixos.networking
     flakeModules.nixos.users
+    flakeModules.nixos.services
+    flakeModules.nixos.nvidia
     ../../modules/nixos/hyprland-session.nix
-    ../../modules/nixos/services.nix
-    ../../modules/nixos/nvidia.nix
   ];
 
   networking.hostName = "desktop";

@@ -11,10 +11,10 @@
     flakeModules.nixos.base
     flakeModules.nixos.networking
     flakeModules.nixos.users
+    flakeModules.nixos.services
+    flakeModules.nixos.peripherals
     ../../modules/nixos/kde.nix
     ../../modules/nixos/niri-session.nix
-    ../../modules/nixos/services.nix
-    ../../modules/nixos/peripherals.nix
     ./power-management.nix
   ];
 
