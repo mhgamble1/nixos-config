@@ -3,6 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:vic/import-tree";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +20,8 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, plasma-manager, niri, ... }:
+  outputs = inputs@{ flake-parts, nixpkgs, home-manager, plasma-manager, niri, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } ({ ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -51,7 +54,7 @@
       };
     in
     {
-      nixosConfigurations = {
+      flake.nixosConfigurations = {
 
         # Desktop — AMD CPU, NVIDIA GPU, daily driver
         # STATUS: dormant since t14 became primary daily driver (2026-08) —
@@ -95,5 +98,5 @@
         };
 
       };
-    };
+    });
 }
