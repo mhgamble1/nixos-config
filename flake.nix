@@ -32,7 +32,7 @@
       hmConfig = {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets; };
+        home-manager.extraSpecialArgs = { inherit secrets; flakeModules = config.flake.modules; };
         home-manager.users.mhg = {
           imports = [
             (import ./home/mhg)

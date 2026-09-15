@@ -1,9 +1,9 @@
-{ config, pkgs, lib, secrets, osConfig, ... }:
+{ config, pkgs, lib, secrets, osConfig, flakeModules, ... }:
 
 {
   imports = lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
     ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/kde-home.nix
-    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/niri.nix;
+    ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";

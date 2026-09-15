@@ -13,8 +13,8 @@
     flakeModules.nixos.users
     flakeModules.nixos.services
     flakeModules.nixos.peripherals
+    flakeModules.nixos.niri
     ../../modules/nixos/kde.nix
-    ../../modules/nixos/niri-session.nix
     ./power-management.nix
   ];
 
