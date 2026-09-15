@@ -1,10 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, flakeModules, ... }:
 
 # System-level Hyprland session — greetd/tuigreet + Hyprland compositor.
-# Used by: desktop. Pair with desktop-session-common.nix for the shared
-# X11/audio/printing/Firefox baseline.
+# Used by: desktop. Pair with the graphical-session-base feature for the
+# shared X11/audio/printing/Firefox baseline.
 {
-  imports = [ ./desktop-session-common.nix ];
+  imports = [ flakeModules.nixos.graphical-session-base ];
 
   # ── Display manager — greetd with tuigreet ───────────────────────────
   # greetd launches Hyprland directly as the PAM session command, so PAM
