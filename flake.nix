@@ -27,40 +27,6 @@
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
       # (The nrs/nrb aliases already include --impure.)
       secrets = import /etc/nixos/secrets.nix;
-
-      # Shared Home Manager config block — same for all hosts
-      hmConfig = {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-        home-manager.extraSpecialArgs = { inherit secrets; flakeModules = config.flake.modules; };
-        home-manager.users.mhg = {
-          imports = [
-            (import ./home/mhg)
-            config.flake.modules.homeManager.music
-            config.flake.modules.homeManager.agents
-            config.flake.modules.homeManager.dev
-            config.flake.modules.homeManager.terminal
-            config.flake.modules.homeManager.theming
-          ];
-        };
-        # niri.homeModules.niri is deliberately NOT added here: when
-        # home-manager is used as a NixOS module (as it is above) alongside
-        # niri.nixosModules.niri, niri-flake auto-imports its home-manager
-        # config module (niri.homeModules.config, which provides
-        # `programs.niri.settings`) for you. Adding homeModules.niri too
-        # double-imports that module and fails the build with "option ...
-        # is already declared" — confirmed by trying it.
-        home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
-        # KDE's own subsystems (kde-gtk-config, font management, etc.) write
-        # directly into paths home-manager also manages, the moment you touch
-        # the relevant System Settings page — turning a home-manager-owned
-        # symlink into a plain file underneath it. Without this, the next
-        # activation fails outright on "would be clobbered" for whichever
-        # file KDE touched last, one at a time. Auto-backing up instead of
-        # failing is the documented remedy for exactly this NixOS-module
-        # situation (see the home-manager-mhg.service error text).
-        home-manager.backupFileExtension = "hm-bak";
-      };
     in
     {
       imports = [
@@ -82,7 +48,7 @@
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/desktop
             home-manager.nixosModules.home-manager
-            hmConfig
+            (config.flake.lib.mkHomeManagerConfig { })
           ];
         };
 
@@ -93,9 +59,19 @@
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/t14
+            # niri.homeModules.niri is deliberately NOT added here: when
+            # home-manager is used as a NixOS module (as it is below)
+            # alongside niri.nixosModules.niri, niri-flake auto-imports its
+            # home-manager config module (niri.homeModules.config, which
+            # provides `programs.niri.settings`) for you. Adding
+            # homeModules.niri too double-imports that module and fails the
+            # build with "option ... is already declared" — confirmed by
+            # trying it.
             niri.nixosModules.niri
             home-manager.nixosModules.home-manager
-            hmConfig
+            (config.flake.lib.mkHomeManagerConfig {
+              extraSharedModules = [ plasma-manager.homeModules.plasma-manager ];
+            })
           ];
         };
 
