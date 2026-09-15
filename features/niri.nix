@@ -1,44 +1,16 @@
 { ... }:
 
-# niri — used by: t14, as a second SDDM session alongside KDE Plasma
-# (features/kde.nix owns the SDDM + graphical-session-base baseline; SDDM
-# is already running in Wayland mode there, so it picks up niri's session
-# entry automatically, no greetd needed).
-#
-# `niri.nixosModules.niri` (added to t14's module list in flake.nix) is what
-# actually provides the `programs.niri` option used below — enabling it
-# installs niri, the niri.desktop session file SDDM lists, and the
-# supporting bits (polkit agent, xdg-desktop-portal-gnome for screencasting,
-# dconf, PAM entry for swaylock) documented in niri-flake's docs.md.
-#
-# niri.homeModules.niri is deliberately NOT added anywhere in this repo:
-# when home-manager is used as a NixOS module alongside niri.nixosModules.niri,
-# niri-flake auto-imports its home-manager config module
-# (niri.homeModules.config, which provides `programs.niri.settings`) for
-# you. Adding homeModules.niri too double-imports that module and fails
-# the build with "option ... is already declared" — confirmed by trying it.
-
 {
   flake.modules.nixos.niri = { pkgs, ... }: {
     programs.niri.enable = true;
 
-    # niri-flake's own niri-stable build currently fails against this
-    # nixpkgs snapshot (references the removed `libdisplay-info_0_2`
-    # attribute — confirmed live while building this config). Falling back
-    # to nixpkgs's own `niri` package sidesteps that; it updates slower than
-    # niri-flake's pin, but builds cleanly. Revisit dropping this override
-    # once niri-flake's lockfile catches back up.
     programs.niri.package = pkgs.niri;
   };
 
   flake.modules.homeManager.niri = { pkgs, ... }: {
-    # Deliberately minimal: a small essential bind set (not a full
-    # transcription of niri's upstream defaults) plus the bare minimum to
-    # get a bar, launcher, and lock screen working. Extend once this is
-    # confirmed working live.
     home.packages = with pkgs; [
-      swaylock # Screen locker (ext-session-lock protocol; swayidle calls it)
-      swayidle # Idle-timeout daemon — niri has no built-in idle handling
+      swaylock
+      swayidle
       wl-clipboard
       pavucontrol
       networkmanagerapplet
@@ -46,19 +18,9 @@
       brightnessctl
     ];
 
-    # ── niri compositor configuration ──────────────────────────────────────
     programs.niri.settings = {
-      # Electron apps need this to behave under Wayland; niri only applies
-      # env vars set here (not ~/.profile ones) to processes it spawns,
-      # because it starts as `niri-session` and imports these into the
-      # systemd/D-Bus activation environment itself.
       environment.NIXOS_OZONE_WL = "1";
 
-      # Qt platform theme — niri has no native Qt integration (unlike KDE),
-      # and this needs to stay scoped to the niri session specifically (see
-      # features/theming.nix for why it can't live in home-manager's
-      # qt.enable instead: those vars would also leak into the KDE session
-      # sharing this host).
       environment.QT_QPA_PLATFORMTHEME = "adwaita";
       environment.QT_STYLE_OVERRIDE = "adwaita-dark";
 
@@ -67,27 +29,16 @@
         touchpad.tap = true;
       };
 
-      # T14's internal panel — matches the 1.5x scale used in hyprland.nix
-      # for the same panel on the desktop host.
       outputs."eDP-1".scale = 1.5;
 
       layout.gaps = 8;
 
-      # nm-applet/mako need a tray + notification server to show up in;
-      # waybar itself is started by home-manager as a systemd unit below
-      # (programs.waybar.systemd.enable), NOT here — starting it both ways
-      # is what caused the doubled bar.
       spawn-at-startup = [
         { argv = [ "mako" ]; }
         { argv = [ "nm-applet" "--indicator" ]; }
         { argv = [ "blueman-applet" ]; }
       ];
 
-      # ── Keybindings ─────────────────────────────────────────────────────
-      # A small essential set, not a full copy of niri's defaults. Anything
-      # not bound here still shows in the startup hotkey-overlay (niri always
-      # lists its "important" suggested actions there, bound or not) so it's
-      # discoverable — Mod+Shift+/ reopens that overlay any time.
       binds = {
         "Mod+Shift+Slash".action.show-hotkey-overlay = [ ];
 
@@ -139,11 +90,6 @@
       };
     };
 
-    # ── Waybar ──────────────────────────────────────────────────────────────
-    # niri needs layer = "top" explicitly (unlike Hyprland, which layers bars
-    # above tiled windows by default) or waybar ends up underneath windows.
-    # systemd.enable = true starts it as a user unit on graphical-session.target
-    # (niri triggers that) instead of via spawn-at-startup — pick one, not both.
     programs.waybar = {
       enable = true;
       systemd.enable = true;
@@ -184,7 +130,6 @@
       }];
     };
 
-    # ── Fuzzel launcher ───────────────────────────────────────────────────
     programs.fuzzel = {
       enable = true;
       settings.main = {
@@ -194,11 +139,6 @@
       };
     };
 
-    # ── Idle / lock ─────────────────────────────────────────────────────────
-    # niri has no built-in idle daemon (unlike Hyprland's hypridle) — it just
-    # implements the idle-notify protocol that swayidle consumes, so swayidle
-    # is the standard pairing here. swaylock works unmodified via the
-    # ext-session-lock protocol, same as on Hyprland.
     services.swayidle = {
       enable = true;
       events = {
@@ -206,12 +146,11 @@
         lock = "swaylock -f";
       };
       timeouts = [
-        { timeout = 1500; command = "swaylock -f"; } # 25 min: lock screen
-        { timeout = 5400; command = "systemctl suspend"; } # 90 min: suspend
+        { timeout = 1500; command = "swaylock -f"; }
+        { timeout = 5400; command = "systemctl suspend"; }
       ];
     };
 
-    # ── Mako notifications ────────────────────────────────────────────────
     services.mako.enable = true;
   };
 }

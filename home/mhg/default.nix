@@ -11,7 +11,6 @@
 
   programs.home-manager.enable = true;
 
-  # ── SSH ───────────────────────────────────────────────────────────────
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -20,12 +19,10 @@
         User = "git";
         IdentityFile = "~/.ssh/id_ed25519";
       };
-      # home Pi, reachable over Tailscale
       "piserver" = {
         User = "pi";
         IdentityFile = "~/.ssh/id_ed25519";
       };
-      # dev VPS, reachable over Tailscale
       "mam-vps" = {
         User = "mhg";
         IdentityFile = "~/.ssh/id_ed25519";
@@ -33,7 +30,6 @@
     };
   };
 
-  # ── Git ───────────────────────────────────────────────────────────────
   programs.git = {
     enable = true;
     lfs.enable = true;
@@ -42,13 +38,12 @@
       user.email = "mhgamble1@gmail.com";
       init.defaultBranch = "main";
       gpg.format = "ssh";
-      commit.gpgsign = false; # enable once SSH signing key is set
+      commit.gpgsign = false;
       pull.rebase = false;
       url."git@github.com:".insteadOf = "https://github.com/";
     };
   };
 
-  # Git — delta pager for beautiful diffs
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
@@ -60,17 +55,14 @@
     };
   };
 
-  # ── Yazi — TUI file manager ───────────────────────────────────────────
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
     shellWrapperName = "yy";
   };
 
-  # ── XDG ───────────────────────────────────────────────────────────────
   xdg.enable = true;
 
-  # ── Session variables ─────────────────────────────────────────────────
   home.sessionVariables = {
     EDITOR = "zeditor --wait";
     VISUAL = "zeditor --wait";
@@ -80,39 +72,31 @@
     ADW_DEBUG_COLOR_SCHEME = "prefer-dark";
   };
 
-  # ── Packages ──────────────────────────────────────────────────────────
   home.packages = with pkgs; [
-    # Clipboard
     wl-clipboard
 
-    # System utilities
     ripgrep
     fd
     jq
     htop
     unzip
 
-    google-chrome # Claude-in-Chrome requires real Chrome; Firefox stays default browser
+    google-chrome
 
     tealdeer
 
-    # Discord
     discord
 
-    # Terminal launcher helper — GIO checks for this before its hardcoded xterm fallback
     xdg-terminal-exec
 
     zola
 
-    # Media / docs
     vlc
     zathura
-    # Downloads
     aria2
     yt-dlp
     nicotine-plus
 
-    # Media processing
     ffmpeg
   ];
 }

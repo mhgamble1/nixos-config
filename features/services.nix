@@ -2,7 +2,6 @@
 
 {
   flake.modules.nixos.services = { pkgs, ... }: {
-    # ── Flatpak ───────────────────────────────────────────────────────────
     services.flatpak.enable = true;
     systemd.services.flatpak-repo = {
       wantedBy = [ "multi-user.target" ];
@@ -14,7 +13,6 @@
       '';
     };
 
-    # ── Bluetooth ─────────────────────────────────────────────────────────
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
     services.blueman.enable = true;

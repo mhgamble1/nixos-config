@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Pick a currently-healthy Mullvad exit node via Tailscale's own suggestion
-# picker and set it, instead of a hardcoded relay hostname. Mullvad relays
-# are decommissioned/rotated without notice, so a pinned hostname is a
-# latent outage. Run as root (or via sudo).
 set -euo pipefail
 
 node=$(tailscale exit-node suggest | sed -n 's/^Suggested exit node: \(.*\)\.$/\1/p')

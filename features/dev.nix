@@ -2,7 +2,6 @@
 
 {
   flake.modules.homeManager.dev = { config, pkgs, lib, ... }: {
-    # ── Go ────────────────────────────────────────────────────────────────
     programs.go = {
       enable = true;
       env = {
@@ -11,21 +10,17 @@
       };
     };
 
-    # ── Dev packages ──────────────────────────────────────────────────────
     home.packages = with pkgs; [
-      # Go
       gopls
       go-tools
 
-      # Python
       uv
       python3
       pyright
       ruff
 
-      # Nix
-      nil # Nix LSP
-      nixpkgs-fmt # Nix formatter
+      nil
+      nixpkgs-fmt
 
       bun
       pnpm

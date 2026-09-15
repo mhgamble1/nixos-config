@@ -7,7 +7,6 @@
       # ls → eza
       eza
 
-      # typescript exercises
       exercism
 
       # find → fd  (already in home.nix)
@@ -83,7 +82,6 @@
       ];
     };
 
-    # ── Ghostty ───────────────────────────────────────────────────────────
     programs.ghostty = {
       enable = true;
       settings = {
@@ -116,18 +114,14 @@
           "15=#c0caf5" # bright white
         ];
 
-        # Window
         background-opacity = 0.95;
         window-padding-x = 10;
         window-padding-y = 8;
-        # Hyprland draws its own borders; GNOME needs decorations for resize/move
         window-decoration = osConfig.networking.hostName != "desktop";
 
-        # Tab bar
         gtk-tabs-location = "bottom";
         gtk-single-instance = false;
 
-        # Behavior
         scrollback-limit = 10000;
         mouse-hide-while-typing = true;
         clipboard-read = "allow";
@@ -136,7 +130,6 @@
       };
     };
 
-    # ── Fish shell ────────────────────────────────────────────────────────
     programs.fish = {
       enable = true;
 
@@ -156,25 +149,20 @@
       '';
 
       shellAliases = {
-        # Navigation
         ".." = "cd ..";
         "..." = "cd ../..";
-        # eza replaces ls
         ls = "eza --icons --group-directories-first";
         ll = "eza -lah --icons --group-directories-first --git";
         la = "eza -lah --icons --group-directories-first";
         lt = "eza --tree --icons --level=2";
         lta = "eza --tree --icons --level=2 -a";
-        # zoxide: use 'z' to jump, 'zi' for interactive
-        # (zoxide is initialized via programs.zoxide.enableFishIntegration)
 
-        # Modern utils
         cat = "bat";
-        diff = "difft"; # structural diff
-        du = "dust"; # intuitive disk usage
-        df = "duf"; # readable disk free
-        ps = "procs"; # readable process list
-        top = "btm"; # bottom system monitor
+        diff = "difft";
+        du = "dust";
+        df = "duf";
+        ps = "procs";
+        top = "btm";
       };
 
       functions = {
@@ -197,7 +185,6 @@
       };
     };
 
-    # bat — better cat (used in alias above)
     programs.bat = {
       enable = true;
       config = {
@@ -206,7 +193,6 @@
       };
     };
 
-    # starship prompt — works well with fish
     programs.starship = {
       enable = true;
       enableFishIntegration = true;

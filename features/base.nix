@@ -2,7 +2,6 @@
 
 {
   flake.modules.nixos.base = { pkgs, lib, ... }: {
-    # ── Timezone and locale ────────────────────────────────────────────────
     time.timeZone = "America/New_York";
 
     i18n.defaultLocale = "en_US.UTF-8";
@@ -18,14 +17,10 @@
       LC_TIME = "en_US.UTF-8";
     };
 
-    # ── Nix settings ──────────────────────────────────────────────────────
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-    # Allow mhg to use the nix daemon as a trusted user (required for
-    # distributed builds — the remote nix daemon must trust the connecting user)
     nix.settings.trusted-users = [ "root" "mhg" ];
 
-    # ── Binary caches ─────────────────────────────────────────────────────
     nix.settings.extra-substituters = [
       "https://nix-community.cachix.org"
     ];
@@ -33,34 +28,24 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
 
-    # Run the Nix daemon at lowest CPU/IO priority so builds don't compete
-    # with the desktop. No hard core caps — let the scheduler do its job.
     systemd.services.nix-daemon.serviceConfig = {
       Nice = lib.mkForce 19;
       IOSchedulingClass = lib.mkForce "idle";
       CPUSchedulingPolicy = lib.mkForce "idle";
     };
 
-    # Sandbox (default on Linux, made explicit here)
     nix.settings.sandbox = true;
 
-    # Allow sandboxed builds to read the ccache store
     nix.settings.extra-sandbox-paths = [ "/var/cache/ccache" ];
 
-    # ── ccache — shared compiler cache for local builds ───────────────────
     programs.ccache.enable = true;
 
-    # ── Unfree packages ───────────────────────────────────────────────────
     nixpkgs.config.allowUnfree = true;
 
-    # ── Shell ─────────────────────────────────────────────────────────────
-    # Must be enabled system-wide so fish appears in /etc/shells
     programs.fish.enable = true;
 
-    # ── nix-ld — run unpatched dynamic binaries ───────────────────────────
     programs.nix-ld.enable = true;
 
-    # ── Base system packages ───────────────────────────────────────────────
     environment.systemPackages = with pkgs; [
       wget
       git

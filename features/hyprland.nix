@@ -1,17 +1,9 @@
 { ... }:
 
-# Hyprland — used by: desktop only. System-level session is greetd/tuigreet
-# + the Hyprland compositor; pairs with the graphical-session-base feature
-# for the shared X11/audio/printing/Firefox baseline.
-
 {
   flake.modules.nixos.hyprland = { pkgs, flakeModules, ... }: {
     imports = [ flakeModules.nixos.graphical-session-base ];
 
-    # ── Display manager — greetd with tuigreet ───────────────────────────
-    # greetd launches Hyprland directly as the PAM session command, so PAM
-    # environment variables (incl. GNOME_KEYRING_CONTROL) are inherited by
-    # the compositor and all child processes — fixing keyring auto-unlock.
     services.greetd = {
       enable = true;
       settings = {
@@ -22,41 +14,33 @@
       };
     };
 
-    # ── dconf — needed for GTK4 apps and portals ──────────────────────────
     programs.dconf.enable = true;
 
-    # ── Hyprland compositor ───────────────────────────────────────────────
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
     };
 
-    # ── XDG portals — screen sharing / file dialogs under Wayland ─────────
     xdg.portal = {
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
     };
 
-    # ── Default terminal for xdg-terminal-exec ────────────────────────────
     xdg.terminal-exec.settings = {
       default = [ "com.mitchellh.ghostty.desktop" ];
     };
 
-    # Realtime scheduling for audio apps (PipeWire, etc.)
     security.pam.loginLimits = [
       { domain = "@audio"; item = "rtprio";  type = "-"; value = "95"; }
       { domain = "@audio"; item = "memlock"; type = "-"; value = "unlimited"; }
     ];
 
-    # ── Secret Service — required by apps using libsecret (e.g. high-tide) ──
     services.gnome.gnome-keyring.enable = true;
     security.pam.services.greetd.enableGnomeKeyring = true;
   };
 
   flake.modules.homeManager.hyprland = { config, pkgs, lib, osConfig, ... }:
     let
-      # Startup profile: launch these apps onto fixed workspaces so the session
-      # comes up in a predictable layout after login.
       startupApps = [
         {
           name = "code-term";
@@ -114,7 +98,6 @@
       '';
     in
     {
-      # Screenshot tools and Wayland utilities
       home.packages = with pkgs; [
         hyprshot # Native Hyprland screenshot tool
         grim # Wayland screenshot utility (backend)
@@ -130,13 +113,11 @@
         brightnessctl # Backlight brightness control
       ];
 
-      # Hyprland compositor configuration
       wayland.windowManager.hyprland = {
         enable = true;
         configType = "hyprlang";
 
         settings = {
-          # ── NVIDIA environment variables ──────────────────────────────────
           env = [
             "LIBVA_DRIVER_NAME,nvidia"
             "XDG_SESSION_TYPE,wayland"
@@ -148,22 +129,18 @@
             "ADW_DEBUG_COLOR_SCHEME,prefer-dark"
           ];
 
-          # ── Monitor ───────────────────────────────────────────────────────
           monitor = if osConfig.networking.hostName == "desktop"
             then "HDMI-A-1,3440x1440@120,0x0,1"
             else "eDP-1,1920x1080@60,0x0,1.5";
 
-          # ── Autostart ─────────────────────────────────────────────────────
           exec-once = [
             "waybar"
             "mako"
             "nm-applet --indicator"
             "blueman-applet"
             "hypr-session-bootstrap"
-            # hypridle is started automatically as a systemd user service (see services.hypridle below)
           ];
 
-          # ── Input ─────────────────────────────────────────────────────────
           input = {
             kb_layout = "us";
             follow_mouse = 1;
@@ -173,7 +150,6 @@
             sensitivity = 0;
           };
 
-          # ── General ───────────────────────────────────────────────────────
           general = {
             gaps_in = 5;
             gaps_out = 10;
@@ -184,7 +160,6 @@
             allow_tearing = false;
           };
 
-          # ── Appearance ────────────────────────────────────────────────────
           decoration = {
             rounding = 8;
             blur = {
@@ -220,19 +195,16 @@
             no_update_news = true;
           };
 
-          # ── Cursor (required for NVIDIA) ──────────────────────────────────
           cursor = {
             no_hardware_cursors = false;
           };
 
-          # ── Misc ──────────────────────────────────────────────────────────
           misc = {
             force_default_wallpaper = 0;
             disable_hyprland_logo = true;
-            disable_splash_rendering = true; # suppress version notification on launch
+            disable_splash_rendering = true;
           };
 
-          # ── Named workspaces ──────────────────────────────────────────────
           workspace = [
             "1, name:1:code"
             "2, name:2:web"
@@ -241,36 +213,30 @@
             "5, name:5:comms"
           ];
 
-          # ── Keybinds ──────────────────────────────────────────────────────
           "$mod" = "SUPER";
 
           bind = [
-            # Applications
             "$mod, RETURN, exec, ghostty"
             "$mod, D, exec, fuzzel"
             "$mod, E, exec, ghostty --class=yazi -e yazi"
             "$mod, M, exec, ghostty --class=spotify-player -e spotify_player"
 
-            # Window management
             "$mod, Q, killactive,"
             "$mod, F, fullscreen, 0"
             "$mod SHIFT, F, togglefloating,"
-            "$mod, P, pseudo," # dwindle pseudotile
-            "$mod, S, layoutmsg, togglesplit" # dwindle split direction
+            "$mod, P, pseudo,"
+            "$mod, S, layoutmsg, togglesplit"
 
-            # Focus — vim keys
             "$mod, h, movefocus, l"
             "$mod, l, movefocus, r"
             "$mod, k, movefocus, u"
             "$mod, j, movefocus, d"
 
-            # Move windows — vim keys
             "$mod SHIFT, h, movewindow, l"
             "$mod SHIFT, l, movewindow, r"
             "$mod SHIFT, k, movewindow, u"
             "$mod SHIFT, j, movewindow, d"
 
-            # Named workspaces 1–5, numeric overflow 6–9
             "$mod, 1, workspace, name:1:code"
             "$mod, 2, workspace, name:2:web"
             "$mod, 3, workspace, name:3:scratch"
@@ -281,7 +247,6 @@
             "$mod, 8, workspace, 8"
             "$mod, 9, workspace, 9"
 
-            # Move window to named workspaces 1–5, numeric overflow 6–9
             "$mod SHIFT, 1, movetoworkspace, name:1:code"
             "$mod SHIFT, 2, movetoworkspace, name:2:web"
             "$mod SHIFT, 3, movetoworkspace, name:3:scratch"
@@ -292,34 +257,27 @@
             "$mod SHIFT, 8, movetoworkspace, 8"
             "$mod SHIFT, 9, movetoworkspace, 9"
 
-            # Scroll through workspaces
             "$mod, mouse_down, workspace, e+1"
             "$mod, mouse_up, workspace, e-1"
 
-            # Cycle recent workspaces
             "$mod, Tab, workspace, previous"
 
-            # Screenshots (hyprshot) + screen recording (wl-screenrec)
             "$mod SHIFT, S, exec, hyprshot -m region"
-            "$mod SHIFT, W, exec, screenrec-toggle" # toggle recording (saves to ~/Videos)
+            "$mod SHIFT, W, exec, screenrec-toggle"
             "$mod SHIFT, P, exec, hyprshot -m output"
 
-            # Screen lock
             "$mod SHIFT, L, exec, swaylock -f"
 
-            # Reload / exit
             "$mod SHIFT, B, exec, hypr-session-bootstrap"
             "$mod SHIFT, R, exec, hyprctl reload"
             "$mod SHIFT, E, exit,"
 
-            # Media controls
             ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
             ", XF86AudioPlay, exec, playerctl play-pause"
             ", XF86AudioNext, exec, playerctl next"
             ", XF86AudioPrev, exec, playerctl previous"
           ];
 
-          # Repeatable binds (held key repeats action — good for volume/brightness)
           binde = [
             ", XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
             ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -327,7 +285,6 @@
             ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
           ];
 
-          # Mouse binds for window resize/move
           bindm = [
             "$mod, mouse:272, movewindow"
             "$mod, mouse:273, resizewindow"
@@ -335,7 +292,6 @@
 
         };
 
-        # ── Window rules (Hyprland 0.46+ block syntax) ────────────────────
         extraConfig = ''
           windowrule {
             name = yazi-float
@@ -355,9 +311,6 @@
         '';
       };
 
-      # ── Desktop entries (override system defaults) ────────────────────────
-      # Yazi: launch via ghostty directly with --class=yazi so the window rule applies.
-      # Terminal=false so fuzzel doesn't wrap it in a second terminal layer.
       xdg.desktopEntries.yazi = {
         name = "Yazi";
         icon = "yazi";
@@ -369,7 +322,6 @@
         mimeType = [ "inode/directory" ];
       };
 
-      # ── Waybar ────────────────────────────────────────────────────────────
       programs.waybar = {
         enable = true;
 
@@ -536,7 +488,6 @@
         '';
       };
 
-      # ── Fuzzel launcher ───────────────────────────────────────────────────
       programs.fuzzel = {
         enable = true;
         settings = {
@@ -565,34 +516,32 @@
         };
       };
 
-      # ── Hypridle (replaces swayidle — uses Hyprland's native idle protocol) ──
       services.hypridle = {
         enable = true;
         settings = {
           general = {
-            lock_cmd = "pidof swaylock || swaylock -f"; # don't double-lock
-            before_sleep_cmd = "swaylock -f"; # lock before suspend
-            after_sleep_cmd = "hyprctl dispatch dpms on"; # display on after resume
+            lock_cmd = "pidof swaylock || swaylock -f";
+            before_sleep_cmd = "swaylock -f";
+            after_sleep_cmd = "hyprctl dispatch dpms on";
           };
           listener = [
             {
-              timeout = 1500; # 25 min: lock screen
+              timeout = 1500;
               on-timeout = "swaylock -f";
             }
             {
-              timeout = 1800; # 30 min: display off
+              timeout = 1800;
               on-timeout = "hyprctl dispatch dpms off";
-              on-resume = "hyprctl dispatch dpms on"; # reliably re-enabled by Hyprland IPC
+              on-resume = "hyprctl dispatch dpms on";
             }
             {
-              timeout = 5400; # 90 min: suspend
+              timeout = 5400;
               on-timeout = "systemctl suspend";
             }
           ];
         };
       };
 
-      # ── Mako notifications ────────────────────────────────────────────────
       services.mako = {
         enable = true;
         settings = {
@@ -609,7 +558,6 @@
           padding = "12";
           font = "JetBrainsMono Nerd Font 12";
         };
-        # Criteria sections must go in extraConfig — not settings — to render as [section] headers
         extraConfig = ''
           [urgency=high]
           border-color=#f7768e
