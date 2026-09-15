@@ -8,7 +8,8 @@
     ../../modules/home/agents.nix
     ../../modules/home/theming.nix
   ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
-    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/kde-home.nix;
+    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/kde-home.nix
+    ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/niri.nix;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";

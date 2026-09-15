@@ -11,6 +11,7 @@
     ../../modules/nixos/base.nix
     ../../modules/nixos/networking.nix
     ../../modules/nixos/kde.nix
+    ../../modules/nixos/niri-session.nix
     ../../modules/nixos/services.nix
     ../../modules/nixos/peripherals.nix
     ../../modules/nixos/users.nix

@@ -12,9 +12,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, plasma-manager, ... }:
+  outputs = { nixpkgs, home-manager, plasma-manager, niri, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -27,6 +31,13 @@
         home-manager.useUserPackages = true;
         home-manager.extraSpecialArgs = { inherit secrets; };
         home-manager.users.mhg = import ./home/mhg;
+        # niri.homeModules.niri is deliberately NOT added here: when
+        # home-manager is used as a NixOS module (as it is above) alongside
+        # niri.nixosModules.niri, niri-flake auto-imports its home-manager
+        # config module (niri.homeModules.config, which provides
+        # `programs.niri.settings`) for you. Adding homeModules.niri too
+        # double-imports that module and fails the build with "option ...
+        # is already declared" — confirmed by trying it.
         home-manager.sharedModules = [ plasma-manager.homeModules.plasma-manager ];
         # KDE's own subsystems (kde-gtk-config, font management, etc.) write
         # directly into paths home-manager also manages, the moment you touch
@@ -65,6 +76,7 @@
           modules = [
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/t14
+            niri.nixosModules.niri
             home-manager.nixosModules.home-manager
             hmConfig
           ];
