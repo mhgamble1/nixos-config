@@ -6,59 +6,40 @@
     home.packages = with pkgs; [
       # ls → eza
       eza
-
       exercism
-
       # find → fd  (already in home.nix)
       # grep → ripgrep  (already in home.nix)
-
       # cat → bat  (configured as program below)
-
       # du → dust
       dust
-
       # df → duf
       duf
-
       # ps → procs
       procs
-
       # sed → sd
       sd
-
       # top → bottom
       bottom
-
       # tldr pages
       tealdeer
-
       # YAML/JSON/TOML/XML processor (like jq but for everything)
       yq-go
-
       # HTTP client (httpie-like, with --json)
       xh
-
       # Universal archive tool (handles zip, tar, gz, zst, 7z…)
       ouch
-
       # Count lines of code
       tokei
-
       # Structural diff (understands syntax, not just text)
       difftastic
-
       # Watch files and re-run commands
       watchexec
-
       # cut/awk replacement
       choose
-
       # Hex viewer
       hexyl
-
       # TUI git client
       lazygit
-
       jujutsu
     ];
 

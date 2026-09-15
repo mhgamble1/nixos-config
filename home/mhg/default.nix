@@ -74,29 +74,21 @@
 
   home.packages = with pkgs; [
     wl-clipboard
-
     ripgrep
     fd
     jq
     htop
     unzip
-
     google-chrome
-
     tealdeer
-
     discord
-
     xdg-terminal-exec
-
     zola
-
     vlc
     zathura
     aria2
     yt-dlp
     nicotine-plus
-
     ffmpeg
   ];
 }

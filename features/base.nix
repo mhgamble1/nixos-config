@@ -3,7 +3,6 @@
 {
   flake.modules.nixos.base = { pkgs, lib, ... }: {
     time.timeZone = "America/New_York";
-
     i18n.defaultLocale = "en_US.UTF-8";
     i18n.extraLocaleSettings = {
       LC_ADDRESS = "en_US.UTF-8";
@@ -18,9 +17,7 @@
     };
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
     nix.settings.trusted-users = [ "root" "mhg" ];
-
     nix.settings.extra-substituters = [
       "https://nix-community.cachix.org"
     ];
@@ -35,7 +32,6 @@
     };
 
     nix.settings.sandbox = true;
-
     nix.settings.extra-sandbox-paths = [ "/var/cache/ccache" ];
 
     programs.ccache.enable = true;
