@@ -67,5 +67,11 @@
   # firmware updates.
   services.fwupd.enable = true;
 
+  # Secret Service backend for the niri session — niri's bundled portal
+  # config (niri-portals.conf) expects gnome-keyring here. KDE has its own
+  # kwallet (via plasma6's "login"/"kde" PAM services), so this doesn't
+  # conflict: only one is active per session.
+  services.gnome.gnome-keyring.enable = true;
+
   system.stateVersion = "25.11";
 }
