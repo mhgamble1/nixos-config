@@ -1,7 +1,7 @@
 { config, pkgs, lib, secrets, osConfig, flakeModules, ... }:
 
 {
-  imports = lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
+  imports = lib.optional (osConfig.networking.hostName == "desktop") flakeModules.homeManager.hyprland
     ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.kde
     ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri;
 
