@@ -21,7 +21,7 @@
   };
 
   outputs = inputs@{ flake-parts, nixpkgs, home-manager, plasma-manager, niri, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } ({ ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }:
     let
       # secrets.nix is gitignored — requires --impure on rebuild so Nix can access it.
       # Run: sudo nixos-rebuild switch --flake /etc/nixos --impure
@@ -33,7 +33,12 @@
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.extraSpecialArgs = { inherit secrets; };
-        home-manager.users.mhg = import ./home/mhg;
+        home-manager.users.mhg = {
+          imports = [
+            (import ./home/mhg)
+            config.flake.modules.homeManager.music
+          ];
+        };
         # niri.homeModules.niri is deliberately NOT added here: when
         # home-manager is used as a NixOS module (as it is above) alongside
         # niri.nixosModules.niri, niri-flake auto-imports its home-manager
@@ -54,6 +59,8 @@
       };
     in
     {
+      imports = [ (inputs.import-tree ./features) ];
+
       flake.nixosConfigurations = {
 
         # Desktop — AMD CPU, NVIDIA GPU, daily driver

@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../modules/home/music.nix
     ../../modules/home/terminal.nix
     ../../modules/home/dev.nix
     ../../modules/home/agents.nix
