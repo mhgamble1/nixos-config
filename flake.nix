@@ -37,6 +37,10 @@
           imports = [
             (import ./home/mhg)
             config.flake.modules.homeManager.music
+            config.flake.modules.homeManager.agents
+            config.flake.modules.homeManager.dev
+            config.flake.modules.homeManager.terminal
+            config.flake.modules.homeManager.theming
           ];
         };
         # niri.homeModules.niri is deliberately NOT added here: when
@@ -59,7 +63,10 @@
       };
     in
     {
-      imports = [ (inputs.import-tree ./features) ];
+      imports = [
+        flake-parts.flakeModules.modules
+        (inputs.import-tree ./features)
+      ];
 
       flake.nixosConfigurations = {
 

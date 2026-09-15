@@ -1,12 +1,7 @@
 { config, pkgs, lib, secrets, osConfig, ... }:
 
 {
-  imports = [
-    ../../modules/home/terminal.nix
-    ../../modules/home/dev.nix
-    ../../modules/home/agents.nix
-    ../../modules/home/theming.nix
-  ] ++ lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
+  imports = lib.optional (osConfig.networking.hostName == "desktop") ../../modules/home/hyprland.nix
     ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/kde-home.nix
     ++ lib.optional (osConfig.networking.hostName == "t14") ../../modules/home/niri.nix;
 
