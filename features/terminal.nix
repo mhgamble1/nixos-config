@@ -1,14 +1,14 @@
 { ... }:
 
 {
-  flake.modules.homeManager.terminal = { config, pkgs, lib, osConfig, ... }: {
+  flake.modules.homeManager.terminal = { config, pkgs, lib, ... }: {
     # ── Modern Unix utilities ─────────────────────────────────────────────
     home.packages = with pkgs; [
       # ls → eza
       eza
       exercism
-      # find → fd  (already in home.nix)
-      # grep → ripgrep  (already in home.nix)
+      fd
+      ripgrep
       # cat → bat  (configured as program below)
       # du → dust
       dust
@@ -41,6 +41,22 @@
       # TUI git client
       lazygit
       jujutsu
+
+      # ── General CLI/GUI packages ──
+      wl-clipboard
+      jq
+      htop
+      unzip
+      google-chrome
+      discord
+      xdg-terminal-exec
+      zola
+      vlc
+      zathura
+      aria2
+      yt-dlp
+      nicotine-plus
+      ffmpeg
     ];
 
     # zoxide — smarter cd
@@ -98,7 +114,7 @@
         background-opacity = 0.95;
         window-padding-x = 10;
         window-padding-y = 8;
-        window-decoration = osConfig.networking.hostName != "desktop";
+        window-decoration = true;
 
         gtk-tabs-location = "bottom";
         gtk-single-instance = false;

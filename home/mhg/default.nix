@@ -1,8 +1,7 @@
-{ config, pkgs, lib, secrets, osConfig, flakeModules, ... }:
+{ config, lib, secrets, osConfig, flakeModules, ... }:
 
 {
-  imports = lib.optional (osConfig.networking.hostName == "desktop") flakeModules.homeManager.hyprland
-    ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.kde
+  imports = lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.kde
     ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri;
 
   home.username = "mhg";
@@ -71,24 +70,4 @@
     NIXOS_OZONE_WL = "1";
     ADW_DEBUG_COLOR_SCHEME = "prefer-dark";
   };
-
-  home.packages = with pkgs; [
-    wl-clipboard
-    ripgrep
-    fd
-    jq
-    htop
-    unzip
-    google-chrome
-    tealdeer
-    discord
-    xdg-terminal-exec
-    zola
-    vlc
-    zathura
-    aria2
-    yt-dlp
-    nicotine-plus
-    ffmpeg
-  ];
 }
