@@ -18,7 +18,7 @@
       url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia.url = "github:noctalia-dev/noctalia";
+    noctalia.url = "github:noctalia-dev/noctalia/cachix";
   };
 
   outputs = inputs@{ flake-parts, nixpkgs, home-manager, niri, noctalia, ... }:
