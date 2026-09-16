@@ -14,7 +14,6 @@ in
         config.flake.modules.homeManager.extras
         config.flake.modules.homeManager.dev
         config.flake.modules.homeManager.terminal
-        config.flake.modules.homeManager.theming
       ];
     };
     home-manager.sharedModules = extraSharedModules;

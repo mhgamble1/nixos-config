@@ -1,8 +1,12 @@
 { config, lib, secrets, osConfig, flakeModules, ... }:
 
 {
-  imports = lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri
-    ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.noctalia;
+  imports = lib.optionals (osConfig.networking.hostName == "t14") [
+    flakeModules.homeManager.niri
+    flakeModules.homeManager.noctalia
+    flakeModules.homeManager.theming
+    flakeModules.homeManager.desktop-apps
+  ];
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
@@ -68,6 +72,5 @@
     TERMINAL = "ghostty";
     BROWSER = "firefox";
     NIXOS_OZONE_WL = "1";
-    ADW_DEBUG_COLOR_SCHEME = "prefer-dark";
   };
 }
