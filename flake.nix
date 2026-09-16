@@ -9,18 +9,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    plasma-manager = {
-      url = "github:nix-community/plasma-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
     niri = {
       url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ flake-parts, nixpkgs, home-manager, plasma-manager, niri, ... }:
+  outputs = inputs@{ flake-parts, nixpkgs, home-manager, niri, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }:
     let
       secrets = import /etc/nixos/secrets.nix;
@@ -39,9 +34,7 @@
             ./hosts/t14
             niri.nixosModules.niri
             home-manager.nixosModules.home-manager
-            (config.flake.lib.mkHomeManagerConfig {
-              extraSharedModules = [ plasma-manager.homeModules.plasma-manager ];
-            })
+            (config.flake.lib.mkHomeManagerConfig { })
           ];
         };
 
