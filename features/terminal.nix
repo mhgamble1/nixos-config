@@ -163,6 +163,14 @@
           description = "NixOS rebuild boot with flake update for current host";
           body = "sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild boot --flake /etc/nixos#(hostname) --impure $argv";
         };
+        nre = {
+          description = "Evaluate NixOS config for current host without building";
+          body = "nix eval --impure --raw /etc/nixos#nixosConfigurations.(hostname).config.system.build.toplevel.drvPath $argv";
+        };
+        nrd = {
+          description = "NixOS dry-build for current host (build without activating)";
+          body = "sudo nixos-rebuild dry-build --flake /etc/nixos#(hostname) --impure $argv";
+        };
       };
     };
 
