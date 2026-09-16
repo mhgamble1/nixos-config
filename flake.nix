@@ -32,16 +32,6 @@
       ];
 
       flake.nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
-          modules = [
-            { nixpkgs.hostPlatform = "x86_64-linux"; }
-            ./hosts/desktop
-            home-manager.nixosModules.home-manager
-            (config.flake.lib.mkHomeManagerConfig { })
-          ];
-        };
-
         t14 = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
           modules = [
