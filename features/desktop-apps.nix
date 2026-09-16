@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  flake.modules.homeManager.desktop-apps = { pkgs, ... }: {
+  flake.modules.homeManager.desktop-apps = { pkgs, config, ... }: {
     home.packages = with pkgs; [
       google-chrome
       discord
@@ -11,6 +11,22 @@
       sone
       xdg-terminal-exec
     ];
+
+    programs.firefox = {
+      enable = true;
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
+      profiles.mhg = {
+        isDefault = true;
+        settings = {
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        };
+        userChrome = ''
+          .titlebar-buttonbox-container {
+            display: none;
+          }
+        '';
+      };
+    };
 
     programs.ghostty = {
       enable = true;
@@ -47,7 +63,7 @@
         background-opacity = 0.95;
         window-padding-x = 10;
         window-padding-y = 8;
-        window-decoration = true;
+        window-decoration = false;
 
         gtk-tabs-location = "bottom";
         gtk-single-instance = false;
