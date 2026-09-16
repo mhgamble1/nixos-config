@@ -9,6 +9,7 @@
     flakeModules.nixos.services
     flakeModules.nixos.peripherals
     flakeModules.nixos.niri
+    flakeModules.nixos.noctalia
     ./power-management.nix
   ];
 

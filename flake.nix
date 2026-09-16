@@ -10,12 +10,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
-      url = "github:sodiboo/niri-flake";
+      url = "github:epireyn/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ flake-parts, nixpkgs, home-manager, niri, ... }:
+  outputs = inputs@{ flake-parts, nixpkgs, home-manager, niri, noctalia, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ config, ... }:
     let
       secrets = import /etc/nixos/secrets.nix;
@@ -33,8 +37,11 @@
             { nixpkgs.hostPlatform = "x86_64-linux"; }
             ./hosts/t14
             niri.nixosModules.niri
+            noctalia.nixosModules.default
             home-manager.nixosModules.home-manager
-            (config.flake.lib.mkHomeManagerConfig { })
+            (config.flake.lib.mkHomeManagerConfig {
+              extraSharedModules = [ noctalia.homeModules.default ];
+            })
           ];
         };
 

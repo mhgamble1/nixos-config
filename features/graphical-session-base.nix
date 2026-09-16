@@ -2,14 +2,6 @@
 
 {
   flake.modules.nixos.graphical-session-base = { pkgs, ... }: {
-    services.xserver.enable = true;
-    services.xserver.excludePackages = [ pkgs.xterm ];
-
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
-    };
-
     services.pulseaudio.enable = false;
     security.rtkit.enable = true;
     services.pipewire = {

@@ -1,7 +1,8 @@
 { config, lib, secrets, osConfig, flakeModules, ... }:
 
 {
-  imports = lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri;
+  imports = lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.niri
+    ++ lib.optional (osConfig.networking.hostName == "t14") flakeModules.homeManager.noctalia;
 
   home.username = "mhg";
   home.homeDirectory = "/home/mhg";
