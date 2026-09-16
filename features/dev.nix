@@ -18,6 +18,7 @@
       pyright
       ruff
       nil
+      nixd
       nixpkgs-fmt
       bun
       pnpm
