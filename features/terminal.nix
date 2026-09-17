@@ -2,8 +2,8 @@
 
 {
   flake.modules.homeManager.terminal = { config, pkgs, lib, ... }: {
-    # ── Modern Unix utilities ─────────────────────────────────────────────
     home.packages = with pkgs; [
+      claude-code
       # ls → eza
       eza
       exercism

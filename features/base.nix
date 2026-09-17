@@ -36,9 +36,6 @@ in
     nix.settings.extra-substituters = binaryCaches.substituters;
     nix.settings.extra-trusted-public-keys = binaryCaches.publicKeys;
 
-    # Auto-accept nixConfig from flakes (e.g. this one, and its inputs) so
-    # `nixos-rebuild`/`nix build`/etc. don't prompt every time. Safe here
-    # since this is a single-user machine and mhg/root are trusted-users.
     nix.settings.accept-flake-config = true;
 
     systemd.services.nix-daemon.serviceConfig = {
