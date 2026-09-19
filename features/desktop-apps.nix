@@ -16,6 +16,7 @@
       enable = true;
       configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles.mhg = {
+        path = "xscg7vfa.default";
         isDefault = true;
         settings = {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;

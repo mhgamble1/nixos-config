@@ -13,7 +13,5 @@
     };
 
     services.printing.enable = true;
-
-    programs.firefox.enable = true;
   };
 }
