@@ -11,7 +11,6 @@ in
     home-manager.users.mhg = {
       imports = [
         (import ../home/mhg)
-        config.flake.modules.homeManager.extras
         config.flake.modules.homeManager.dev
         config.flake.modules.homeManager.terminal
       ];

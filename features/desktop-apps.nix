@@ -9,6 +9,7 @@
       zathura
       nicotine-plus
       sone
+      stremio-linux-shell
       xdg-terminal-exec
     ];
 
