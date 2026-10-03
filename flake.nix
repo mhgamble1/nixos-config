@@ -42,7 +42,7 @@
         t14 = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit secrets; flakeModules = config.flake.modules; };
           modules = [
-            { nixpkgs.hostPlatform = "x86_64-linux"; }
+            { nixpkgs.hostPlatform = "x86_64-linux"; nixpkgs.overlays = [ niri.overlays.niri ]; }
             ./hosts/t14
             niri.nixosModules.niri
             noctalia.nixosModules.default

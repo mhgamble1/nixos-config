@@ -6,10 +6,10 @@
 
     programs.niri.enable = true;
 
-    programs.niri.package = pkgs.niri;
+    programs.niri.package = pkgs.niri-unstable;
   };
 
-  flake.modules.homeManager.niri = { pkgs, ... }: {
+  flake.modules.homeManager.niri = { pkgs, lib, ... }: {
     home.packages = with pkgs; [
       wl-clipboard
       playerctl
@@ -18,6 +18,11 @@
 
     programs.niri.settings = {
       environment.NIXOS_OZONE_WL = "1";
+
+      xwayland-satellite = {
+        enable = true;
+        path = lib.getExe pkgs.xwayland-satellite-unstable;
+      };
 
       input = {
         keyboard.xkb.layout = "us";
