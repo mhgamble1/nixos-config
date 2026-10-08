@@ -8,3 +8,7 @@ secrets.nix
 
 # AI tooling
 .codex
+
+# Docker stack secrets/state (stacks/*/*/)
+stacks/**/.env
+stacks/**/data/

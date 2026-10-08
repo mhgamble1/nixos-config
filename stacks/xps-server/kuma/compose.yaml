@@ -1,0 +1,12 @@
+## Uptime Kuma on xps-server -- the one alerting tool (MK-152).
+## Bound to the host's tailnet IP only. Not in the MAM/VPN namespace, so it
+## can't be blinded by the very failure it alerts on.
+name: kuma
+services:
+  kuma:
+    image: louislam/uptime-kuma:1
+    container_name: kuma
+    restart: unless-stopped
+    mem_limit: 256m
+    ports: ["100.89.106.16:3001:3001"]
+    volumes: ["./data:/app/data"]

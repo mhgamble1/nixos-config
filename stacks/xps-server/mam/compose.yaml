@@ -1,0 +1,142 @@
+## MAM stack on xps-server (MK-152/MK-153). Deploy to ~/docker/mam/ on xps.
+##
+## Everything that talks to MAM shares ONE network namespace (the `ts`
+## sidecar's), whose only route off the box is a Tailscale Mullvad exit node.
+## MAM sessions are IP-locked, so these must share an egress anyway.
+##
+## Kill switch, in layers:
+##  1. Everything joins the `netns` holder container (network_mode: service:netns):
+##     no interface of its own, and restarting `ts` never strands the apps.
+##  2. guard.sh (in `netns`) drops any non-root egress on eth0 (the docker
+##     bridge) so a tailscale crash/startup gap can't leak the real IP. Root is
+##     allowed because tailscaled itself needs eth0 to reach the exit node
+##     => every app container MUST run non-root (PUID=1000 etc.).
+##  3. ts healthcheck requires am.i.mullvad.net to confirm Mullvad egress;
+##     dependants wait for `healthy`.
+##  4. qBittorrent: also bind to interface tailscale0 (WebUI -> Advanced).
+##
+## Web UIs are reached via the sidecar's own tailnet name (xps-mam), not
+## published docker ports.
+name: mam
+
+services:
+  netns:
+    image: tailscale/tailscale:stable   # just for iptables-nft; runs guard.sh
+    container_name: mam-netns
+    hostname: xps-mam
+    restart: unless-stopped
+    cap_add: [NET_ADMIN]
+    entrypoint: ["/guard.sh"]
+    dns: [100.100.100.100]   # MagicDNS via tailscale0, never the LAN resolver
+    volumes:
+      - ./guard.sh:/guard.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "iptables-nft -S OUTPUT | grep -q -- '-o eth0 -j DROP'"]
+      interval: 30s
+      timeout: 5s
+      retries: 2
+    mem_limit: 32m
+
+  ts:
+    image: tailscale/tailscale:stable
+    container_name: mam-ts
+    restart: unless-stopped
+    network_mode: service:netns
+    depends_on:
+      netns: {condition: service_healthy}
+    cap_add: [NET_ADMIN]
+    devices: ["/dev/net/tun:/dev/net/tun"]
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY:-}   # unset = interactive login; URL appears in `docker logs mam-ts`
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_HOSTNAME=xps-mam
+      - TS_USERSPACE=false
+      - TS_ACCEPT_DNS=true
+      - TS_EXTRA_ARGS=--exit-node=${MULLVAD_EXIT_NODE:?e.g. us-nyc-wg-301.mullvad.ts.net} --advertise-tags=tag:mam-stack
+    volumes:
+      - ./data/ts:/var/lib/tailscale
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -T 5 -O- https://am.i.mullvad.net/connected | grep -q 'You are connected to Mullvad'"]
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+    mem_limit: 128m
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:5.2.3
+    container_name: mam-qbittorrent
+    restart: unless-stopped
+    network_mode: service:netns
+    depends_on:
+      ts: {condition: service_healthy}
+    mem_limit: 768m
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=51413
+    volumes:
+      - ./data/qbittorrent:/config
+      - ${LIBRARY_DIR:-./data/library}:/library
+
+  mousehole:
+    image: tmmrtn/mousehole:latest
+    container_name: mam-mousehole
+    restart: unless-stopped
+    network_mode: service:netns
+    depends_on:
+      ts: {condition: service_healthy}
+    mem_limit: 128m
+    # Non-root is REQUIRED: the guard (guard.sh) only blocks non-root eth0
+    # egress, and this image runs as root by default.
+    user: "1000:100"
+    environment:
+      - TZ=Etc/UTC
+      - MOUSEHOLE_AUTH_PASSWORD=${MOUSEHOLE_AUTH_PASSWORD:?set in .env}
+      - MOUSEHOLE_ALLOWED_HOSTS=localhost,127.0.0.1,[::1],xps-mam:5010,xps-mam.tail25cfe0.ts.net:5010
+      - MOUSEHOLE_ALLOWED_ORIGINS=http://xps-mam:5010,http://xps-mam.tail25cfe0.ts.net:5010
+    volumes:
+      - ./data/mousehole:/var/lib/mousehole
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: mam-prowlarr
+    restart: unless-stopped
+    network_mode: service:netns
+    depends_on:
+      ts: {condition: service_healthy}
+    mem_limit: 256m
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Etc/UTC
+    volumes:
+      - ./data/prowlarr:/config
+
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: mam-shelfmark
+    restart: unless-stopped
+    network_mode: service:netns
+    depends_on:
+      ts: {condition: service_healthy}
+    mem_limit: 256m
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Etc/UTC
+      - FLASK_PORT=8084
+      - INGEST_DIR=/library/books/ebooks
+      - DESTINATION_AUDIOBOOK=/library/books/audiobooks
+      - FILE_ORGANIZATION_AUDIOBOOK=organize
+      - FILE_ORGANIZATION=organize
+      - SEARCH_MODE=universal
+      - HARDLINK_TORRENTS=true
+      - HARDLINK_TORRENTS_AUDIOBOOK=true
+      - PROWLARR_TORRENT_ACTION=keep
+    volumes:
+      - ./data/shelfmark:/config
+      # One mount for downloads AND books: hardlinks need a single filesystem.
+      - ${LIBRARY_DIR:-./data/library}:/library
