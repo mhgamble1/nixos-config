@@ -38,5 +38,41 @@
     options = [ "nofail" "noatime" "x-systemd.device-timeout=10s" ];
   };
 
+  # Docker never restarts a container that is merely `unhealthy`, so a hung
+  # mam-ts (stale Mullvad exit, wedged tailscaled) would sit there with the
+  # egress guard dropping everything. Restart it, and push a heartbeat to
+  # Kuma every run (a missing heartbeat = the host/watchdog itself is dead).
+  # Optional /etc/mam-watchdog.env (not in the repo) sets
+  #   KUMA_PUSH_URL=http://100.89.106.16:3001/api/push/<token>
+  systemd.services.mam-ts-watchdog = {
+    description = "Restart mam-ts when unhealthy; heartbeat to Kuma";
+    path = [ pkgs.docker pkgs.curl pkgs.coreutils ];
+    serviceConfig = {
+      Type = "oneshot";
+      EnvironmentFile = "-/etc/mam-watchdog.env";
+    };
+    script = ''
+      health=$(docker inspect -f '{{.State.Health.Status}}' mam-ts 2>/dev/null || echo missing)
+      status=up; msg=healthy
+      if [ "$health" = unhealthy ]; then
+        echo "mam-ts unhealthy, restarting"
+        docker restart mam-ts || true
+        status=down; msg=restarted-unhealthy
+      elif [ "$health" != healthy ]; then
+        status=down; msg="mam-ts-$health"
+      fi
+      if [ -n "''${KUMA_PUSH_URL:-}" ]; then
+        curl -fsS -m 10 "$KUMA_PUSH_URL?status=$status&msg=$msg" >/dev/null || true
+      fi
+    '';
+  };
+  systemd.timers.mam-ts-watchdog = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "3min";
+      OnUnitActiveSec = "1min";
+    };
+  };
+
   system.stateVersion = "25.11";
 }
