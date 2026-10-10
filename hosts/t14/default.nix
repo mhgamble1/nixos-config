@@ -39,7 +39,10 @@
     };
   };
 
-  environment.systemPackages = [ pkgs.brightnessctl pkgs.sshfs ];
+  environment.systemPackages = [ pkgs.brightnessctl pkgs.sshfs pkgs.nautilus ];
+
+  # trash, network/sftp mounts and removable media in nautilus
+  services.gvfs.enable = true;
 
   virtualisation.docker.enable = true;
   users.users.mhg.extraGroups = [ "docker" ];
